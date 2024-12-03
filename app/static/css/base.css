@@ -1,0 +1,13 @@
+:root {
+    --bg-color: #E9EFEC;
+    --text-color: #16423C;
+    --primary-color: #89CFB5;
+    --secondary-color: #f3fffb;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+body {
+    overflow-x: hidden;
+}

@@ -1,0 +1,69 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DirectFarm{% endblock title %}</title>
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Raleway:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block styles %}{% endblock styles %}
+    {% tailwind_css %}
+</head>
+<body class="flex flex-col text-primary justify-between font-raleway relative">
+
+    <!-- Include header template -->
+    {% include "header.html" %}
+    {% comment %} {% include "sticky-header.html" %} {% endcomment %}
+      
+    <!-- Main Content Section-->
+    <main class="flex-1 p-12 mt-16">
+        {% block content %}{% endblock content %}
+        <button 
+            class="hidden fixed bottom-4 right-2 z-50 text-xl bg-primary p-3 rounded-full text-light animate-bounce" 
+            id="scrollToTop" 
+            title="Go to top"
+            >
+            <img class="w-6 h-6" src="{% static 'images/up.png' %}" alt="">
+        </button>
+    </main>
+
+    <!-- Include footer template -->
+    {% include "footer.html" %}
+    
+    <script>
+        // Get the header element
+        const stickyHeader = document.getElementById("stickyHeader");
+        const scrollToTop = document.getElementById("scrollToTop");
+    
+        // Track the last scroll position
+        let lastScrollTop = 0;
+    
+        window.addEventListener("scroll", function() {
+          let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+    
+        if (currentScroll > 50) {
+            // Scroll Down
+            stickyHeader.classList.add("shadow-lg"); // Add box shadow to header.
+            scrollToTop.classList.remove("hidden"); // Hide scroll to top button.
+        } else if(currentScroll <= 0) {
+            // Scroll to top
+            stickyHeader.classList.remove("shadow-lg"); // Remove box shadow.
+            scrollToTop.classList.add("hidden"); // Show scroll to top button.
+        }
+    
+        scrollToTop.onclick = function () {
+            window.scrollTo({
+                top:0,
+                behavior: 'smooth'
+            })
+        }
+          lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // Ensure it doesn't go negative
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+{% load static %}
+<header id="stickyHeader" class="hidden">
+    <nav class="w-full flex items-center gap-12 text-primary font-semibold font-montserrat p-4 bg-white fixed top-0 z-50 shadow-lg">
+        <a class="flex items-center text-xl font-bold hover:no-underline" href="/">
+            <img src="{% static 'images/Icon.png' %}" class="w-12" alt="Logo of DirectFarm">
+            <h1 class="text-green">Direct</h1>
+            <h1 class="text-brown">Farm</h1>
+        </a>
+        <div class="flex gap-4 flex-1 items-center justify-evenly">
+            <a class="" href="/">Home</a>
+            <a class="" href="/products/">Products</a>
+            <a class="" href="/about/">About</a>
+            <a class="" href="/farmers/">Farmers</a>
+            <a class="" href="/contact/">Contact</a>
+        </div>
+        <div class="w-1/3 relative">
+            <input 
+                class="w-full border border-secondary rounded-xl p-2 pl-3 pr-28 font-raleway focus:border-primary focus:ring-0" 
+                type="text" 
+                name="search" 
+                id="search"
+                placeholder="Search products..."
+            >
+            <span class="absolute top-1/2 -translate-y-1/2 right-9 bg-light p-1 pl-2 pr-2 rounded-lg border text-primary text-sm">
+                Ctrl+K
+            </span>
+            <a class="absolute top-1/2 -translate-y-1/2 right-1" href="/search/">
+                <img class="w-7" src="{% static 'images/search.png' %}" alt="">
+            </a>
+        </div>
+        <div class="flex items-center gap-4">
+            <a class="w-8" href="/cart">
+                <img src="{% static 'images/cart.png' %}" alt="">
+            </a>
+            <a class="w-8" href="/account">
+                <img src="{% static 'images/user.png' %}" alt="">
+            </a>
+        </div>
+    </nav>
+</header>
