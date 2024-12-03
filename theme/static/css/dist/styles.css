@@ -958,26 +958,6 @@ select {
   width: 100%;
 }
 
-.w-2\/3 {
-  width: 66.666667%;
-}
-
-.w-\[96\] {
-  width: 96;
-}
-
-.w-\[96\%\%\] {
-  width: 96%%;
-}
-
-.w-\[96\%\] {
-  width: 96%;
-}
-
-.w-4\/5 {
-  width: 80%;
-}
-
 .flex-1 {
   flex: 1 1 0%;
 }
@@ -1020,34 +1000,6 @@ select {
 
 .animate-bounce {
   animation: bounce 1s infinite;
-}
-
-@keyframes slideIn {
-  0% {
-    transform: translateX(50%);
-  }
-
-  100% {
-    transform: translateX(0);
-  }
-}
-
-.animate-slideIn {
-  animation: slideIn 1s ease-in-out;
-}
-
-@keyframes slideOut {
-  0% {
-    transform: translateX(0%);
-  }
-
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-slideOut {
-  animation: slideOut 1s ease-in-out;
 }
 
 .cursor-pointer {
