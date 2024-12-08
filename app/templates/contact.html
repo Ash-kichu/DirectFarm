@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Contact | DirectFarm{% endblock title %}
+{% block main_content %}
+<section class="flex gap-4 items-start justify-start p-12">
+    <div class="flex-1 flex flex-col items-start justify-start gap-4">
+        <span class="flex items-center gap-2 p-2 pl-3 pr-3 border border-secondary w-fit rounded-full">
+            <h2 class="">Get In Touch With Us</h2>
+        </span>
+        <h1 class="font-bold text-5xl">We'd Love to Hear from You!</h1>
+        <p>
+            Have questions or need assistance? Reach out to us for support, feedback, or partnership opportunities. 
+            We're here to help and ensure your experience with DirectFarm is seamless and enjoyable!
+        </p>
+        <span class="">Email: <a href="#" class="font-bold font-montserrat">info@directfarm.com</a></span>
+        <span class="">Call Us: <a href="#" class="font-bold font-montserrat">999999999</a></span>
+    </div>
+    <div class="flex-1 flex flex-col gap-4 p-6 bg-white border shadow-xl rounded-xl">
+        <h2 class="font-bold text-2xl">Connect With Us</h2>
+        <p class="mb-6">Fill out the form below, and we’ll get back to you as soon as possible.</p>
+        <form action="/submit-contact-form/" method="POST" class="flex flex-col gap-4 p-2">
+            <div class="flex items-center justify-between gap-4">
+                <div class="flex flex-col flex-1">
+                  <label for="name">Name</label>
+                  <input class="rounded-xl" type="text" id="name" name="name" placeholder="Your Name" required>
+                </div>
+                <div class="flex flex-col flex-1">
+                  <label for="email">Email</label>
+                  <input class="rounded-xl" type="email" id="email" name="email" placeholder="Your Email" required>
+                </div>
+            </div>
+            
+            <div class="flex items-start justify-between gap-4">
+                <div class="flex flex-col flex-1">
+                  <label for="subject">Subject</label>
+                  <input class="rounded-xl" type="text" id="subject" name="subject" placeholder="Subject" required>
+                </div>
+                <div class="flex flex-col flex-1">
+                  <label for="message">Message</label>
+                  <textarea class="rounded-xl" id="message" name="message" rows="5" placeholder="Write your message here..." required></textarea>
+                </div>
+            </div>
+            <button type="submit" class="p-2 mt-6 bg-light hover:bg-secondary rounded-xl font-bold text-xl">Send Message</button>
+          </form>
+    </div>
+</section>
+<section id="faq" class="flex flex-col items-center gap-8 mt-12">
+    <h2 class="font-bold text-3xl">Frequently Asked Questions</h2>
+    <div class="flex flex-col gap-6">
+
+      <div class="flex flex-col gap-2 relative">
+        <i class="fa-solid fa-quote-left absolute -left-5 top-0"></i>
+        <h3 class="font-bold text-xl">What is DirectFarm?</h3>
+        <p>DirectFarm is an online marketplace connecting local farmers with consumers, offering fresh, sustainable, and locally-grown produce.</p>
+    </div>
+    
+    <div class="flex flex-col gap-2 relative">
+          <i class="fa-solid fa-quote-left absolute -left-5 top-0"></i>
+        <h3 class="font-bold text-xl">How do I place an order?</h3>
+        <p>Browse our products, add items to your cart, and proceed to checkout. We’ll deliver fresh produce directly to your doorstep.</p>
+      </div>
+  
+      <div class="flex flex-col gap-2 relative">
+        <i class="fa-solid fa-quote-left absolute -left-5 top-0"></i>
+        <h3 class="font-bold text-xl">Is there a minimum order amount?</h3>
+        <p>No, you can order as much or as little as you like, though delivery fees may apply for small orders.</p>
+      </div>
+  
+      <div class="flex flex-col gap-2 relative">
+        <i class="fa-solid fa-quote-left absolute -left-5 top-0"></i>
+        <h3 class="font-bold text-xl">How do I become a registered farmer?</h3>
+        <p>Click on the “Sign Up Now” button on the homepage and fill out the registration form. Our team will review and get in touch with you.</p>
+      </div>
+  
+      <div class="flex flex-col gap-2 relative">
+        <i class="fa-solid fa-quote-left absolute -left-5 top-0"></i>
+        <h3 class="font-bold text-xl">What payment methods do you accept?</h3>
+        <p>We accept credit cards, debit cards, UPI, and other popular payment methods.</p>
+      </div>
+  
+    </div>
+</section>  
+{% endblock main_content %}

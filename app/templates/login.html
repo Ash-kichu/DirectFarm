@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Login | DirectFarm{% endblock title %}
+{% block main_content %}
+<section class="flex flex-col gap-4 py-6">
+  <div class="py-6">
+    <div class="container mx-auto text-center">
+      <h1 class="text-3xl font-bold">Welcome back</h1>
+      <p class="mt-2">Log in to access your account and start shopping for fresh produce!</p>
+    </div>
+  </div>
+  <div class="py-10">
+    <div class="container mx-auto max-w-md">
+      <form action="/login/" method="POST" class="space-y-6 bg-white p-8 border rounded-lg shadow-md">
+        <!-- Email -->
+        <div>
+          <label for="email" class="block text-gray-700 font-semibold">Email Address</label>
+          <input type="email" id="email" name="email" required class="w-full border border-gray-300 rounded-lg p-3 mt-2" placeholder="Enter your email address">
+        </div>
+  
+        <!-- Password -->
+        <div>
+          <label for="password" class="block text-gray-700 font-semibold">Password</label>
+          <input type="password" id="password" name="password" required class="w-full border border-gray-300 rounded-lg p-3 mt-2" placeholder="Enter your password">
+        </div>
+  
+        <!-- Forgot Password Link -->
+        <div class="text-right">
+          <a href="/forgot-password/" class="text-sm text-green-600 hover:underline">Forgot your password?</a>
+        </div>
+  
+        <!-- Login Button -->
+        <div>
+          <button type="submit" class="w-full py-3 px-4 rounded-lg font-semibold bg-primary text-white hover:bg-dark">Log In</button>
+        </div>
+  
+        <!-- Sign Up Link -->
+        <div class="text-center">
+          <p class="text-sm text-gray-600">Don't have an account? <a href="/signup/" class="font-bold text-primary hover:underline">Sign up here</a></p>
+        </div>
+      </form>
+    </div>
+  </div>  
+    
+</section>
+
+ 
+{% endblock main_content %}

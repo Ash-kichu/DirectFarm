@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cart | DirectFarm{% endblock title %}
+{% block main_content %}
+<section class="w-full flex flex-col gap-4 items-center justify-center p-12">
+    <div class="container mx-auto text-center">
+      <h1 class="text-3xl font-bold">Your Cart</h1>
+      <p class="mt-2">Review your selected items before checkout.</p>
+    </div>
+    <div class="hidden py-10 text-center">
+        <div class="container mx-auto">
+          <h2 class="text-2xl font-bold">Your Cart is Empty</h2>
+          <p class="mt-4">It looks like you haven't added anything to your cart yet.</p>
+          <a href="/products/" class="mt-6 inline-block bg-green-600 text-white font-bold py-2 px-4 rounded hover:bg-green-700">
+            Start Shopping
+          </a>
+        </div>
+    </div>
+    <div class="w-full py-10">
+        <div class="container mx-auto">
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse border border-light">
+              <thead>
+                <tr class="bg-light">
+                  <th class="border border-light p-2 text-center">Product</th>
+                  <th class="border border-light p-2 text-center">Name</th>
+                  <th class="border border-light p-2 text-center">Quantity</th>
+                  <th class="border border-light p-2 text-center">Price</th>
+                  <th class="border border-light p-2 text-center">Subtotal</th>
+                  <th class="border border-light p-2 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="font-montserrat">
+                  <td class="border border-light p-2 text-center flex items-center justify-center">
+                    <img src="{% static 'images/tomato.webp' %}" alt="Tomatoes" class="w-16 h-16 object-cover rounded">
+                  </td>
+                  <td class="border border-light p-2 text-center">Fresh Tomatoes</td>
+                  <td class="border border-light p-2 text-center">
+                    <input type="number" class="w-16 border rounded p-1 text-center" value="2">
+                  </td>
+                  <td class="border border-light p-2 text-center">₹50</td>
+                  <td class="border border-light p-2 text-center">₹100</td>
+                  <td class="border border-light p-2 text-center">
+                    <button class="text-red-600 hover:underline">Remove</button>
+                  </td>
+                </tr>
+                <!-- Add more rows for items -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+    </div>
+    <div class="w-full py-10">
+        <div class="container mx-auto">
+          <h2 class="text-2xl font-bold mb-4">Summary</h2>
+          <div class="border border-light rounded-xl p-4 bg-white font-montserrat">
+            <div class="flex justify-between mb-2">
+              <span>Subtotal:</span>
+              <span>₹300</span>
+            </div>
+            <div class="flex justify-between mb-2">
+              <span>Tax (5%):</span>
+              <span>₹15</span>
+            </div>
+            <div class="flex justify-between font-bold">
+              <span>Total:</span>
+              <span>₹315</span>
+            </div>
+            <a href="/checkout/" class="block mt-4 text-center font-bold py-2 px-4 rounded bg-light hover:bg-primary hover:text-white">
+              Proceed to Checkout
+            </a>
+          </div>
+        </div>
+    </div>
+      
+      
+</section>  
+{% endblock main_content %}

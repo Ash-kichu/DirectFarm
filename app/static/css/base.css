@@ -1,8 +1,11 @@
 :root {
     --bg-color: #E9EFEC;
     --text-color: #16423C;
-    --primary-color: #89CFB5;
-    --secondary-color: #f3fffb;
+    --primary-color: #16423C;
+    --secondary-color: #89CFB5;
+    --green-color: #3BA547;
+    --dark-color: #00201c;
+    --light-color: #afebd5;
 }
 
 a:hover {

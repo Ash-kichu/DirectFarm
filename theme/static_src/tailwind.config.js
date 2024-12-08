@@ -49,7 +49,7 @@ module.exports = {
                 green: '#3BA547',
                 brown: '#9E4622',
                 dark: '#00201c',
-                light: '#f3fffb',
+                light: '#afebd5',
             },
             fontFamily: {
                 'montserrat' : ['Montserrat', 'serif'],
@@ -60,33 +60,50 @@ module.exports = {
                 'bottom': '0 1px 8px #16423C',
             },
             animation: {
-                'dropDown': 'dropDown .3s ease-in-out infinite',
-                'slideIn': 'slideIn 1s ease-in-out',
-                'slideOut': 'slideOut 1s ease-in-out',
+                'dropDown': 'dropDown 1s',
+                'slideInLeft': 'slideInLeft 1s',
+                'slideInRight': 'slideInRight 1s',
+                'zoom': 'zoom 1s',
             },
             keyframes: {
                 dropDown: {
                     '0%': {
-                        transform: 'translateY(-100%)'
+                        opacity:0,
+                        transform: 'translateY(-50%)'
                     },
                     '100%': {
+                        opacity:1,
                         transform: 'translateY(0)'
                     },
                 },
-                slideIn: {
+                slideInLeft: {
                     '0%': {
+                        opacity:0,
                         transform: 'translateX(50%)'
                     },
                     '100%': {
+                        opacity:1,
                         transform: 'translateX(0)'
                     },
                 },
-                slideOut: {
+                slideInRight: {
                     '0%': {
-                        transform: 'translateX(0%)'
+                        opacity:0,
+                        transform: 'translateX(-50%)'
                     },
                     '100%': {
-                        transform: 'translateX(-50%)'
+                        opacity:1,
+                        transform: 'translateX(0%)'
+                    },
+                },
+                zoom: {
+                    '0%': {
+                        opacity:0,
+                        transform: 'scale(0%)'
+                    },
+                    '100%': {
+                        opacity:1,
+                        transform: 'scale(100%)'
                     },
                 },
             },

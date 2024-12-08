@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Raleway:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/regular.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     {% block styles %}{% endblock styles %}
@@ -21,8 +22,8 @@
     {% comment %} {% include "sticky-header.html" %} {% endcomment %}
       
     <!-- Main Content Section-->
-    <main class="flex-1 p-12 mt-16">
-        {% block content %}{% endblock content %}
+    <main class="flex-1 p-4 md:p-12 mt-16">
+        {% block main_content %}{% endblock main_content %}
         <button 
             class="hidden fixed bottom-4 right-2 z-50 text-xl bg-primary p-3 rounded-full text-light animate-bounce" 
             id="scrollToTop" 

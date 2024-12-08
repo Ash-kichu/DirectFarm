@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}About | DirectFarm{% endblock title %}
+{% block main_content %}
+<section class="flex flex-col items-center gap-4 pl-32 pr-32">
+    <h1 class="font-bold text-3xl">Our Story</h1>
+    <p>Building Bridges Between Farmers and Consumers</p>
+    <div class="w-full flex gap-12 p-12">
+        <div class="flex-1 flex flex-col gap-4">
+            <span class="flex items-center gap-2 p-2 pr-3 border border-secondary w-fit rounded-full">
+                <img class="w-6" src="{% static 'images/agronomy.png' %}" alt="">
+                <h2 class="">Our Beginning</h2>
+            </span>
+            <h2 class="font-bold text-2xl">Where It All Started</h2>
+            <p>
+                At DirectFarm, we began with a simple idea: to empower local farmers and provide fresh, sustainable produce to consumers. 
+                Witnessing the challenges farmers face in earning fair prices and consumers' difficulty in accessing farm-fresh produce, 
+                we envisioned a platform that bridges this gap.
+    
+                What started as a small initiative has grown into a mission-driven project aimed at transforming how people connect with their food sources.    
+            </p>
+        </div>
+        <div class="h-96">
+            <img class="object-cover w-full h-full rounded-xl" src="{% static 'images/farmer.jpg' %}" alt="">
+        </div>        
+    </div>
+    <div class="w-full flex gap-12">
+        <div class="h-96">
+            <img class="object-cover w-full h-full rounded-xl" src="{% static 'images/farmer.jpg' %}" alt="">
+        </div>        
+        <div class="flex-1 flex flex-col gap-4">
+            <span class="flex items-center gap-2 p-2 pr-3 border border-secondary w-fit rounded-full">
+                <img class="w-6" src="{% static 'images/agronomy.png' %}" alt="">
+                <h2 class="">Our Mission</h2>
+            </span>
+            <h2 class="font-bold text-2xl">Connecting Communities, Empowering Farmers</h2>
+            <p>
+                We believe in creating a transparent and fair marketplace where:
+            </p>
+            <ul>
+                <li>
+                    <i class="fa-solid fa-check"></i>
+                    Farmers are rewarded for their hard work with fair prices.
+                </li>
+                <li>
+                    <i class="fa-solid fa-check"></i>
+                    Consumers receive high-quality, fresh produce directly from the source.
+                </li>
+                <li>
+                    <i class="fa-solid fa-check"></i>
+                    Communities thrive through sustainable and local food systems.
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="w-full flex gap-12 p-12">
+        <div class="flex-1 flex flex-col gap-4">
+            <span class="flex items-center gap-2 p-2 pr-3 border border-secondary w-fit rounded-full">
+                <img class="w-6" src="{% static 'images/agronomy.png' %}" alt="">
+                <h2 class="">Our Journey So Far</h2>
+            </span>
+            <h2 class="font-bold text-2xl">Growing Together for a Better Tomorrow</h2>
+            <p>
+                Since our inception, DirectFarm has partnered with local farmers to bring their produce to a broader audience. Through dedication and collaboration, we’ve:
+            </p>
+            <ul>
+                <li>
+                    <i class="fa-solid fa-check"></i>
+                    Connected farmers and consumers in ways never imagined.
+                </li>
+                <li>
+                    <i class="fa-solid fa-check"></i>
+                    Reduced food miles, promoting environmental sustainability.
+                </li>
+                <li>
+                    <i class="fa-solid fa-check"></i>
+                    Helped farmers achieve better earnings for their produce.
+                </li>
+            </ul>
+        </div>
+        <div class="h-96">
+            <img class="object-cover w-full h-full rounded-xl" src="{% static 'images/farmer.jpg' %}" alt="">
+        </div>        
+    </div>
+</section>
+{% endblock main_content %}
