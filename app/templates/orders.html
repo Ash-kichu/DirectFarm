@@ -1,0 +1,35 @@
+{% extends "account.html" %}
+
+{% block account_section %}
+<div id="orders" class="py-6">
+  <div class="container mx-auto max-w-4xl">
+    <h2 class="text-2xl font-bold mb-4">Your Orders</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full border-collapse border border-gray-300">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border p-2">Order ID</th>
+            <th class="border p-2">Date</th>
+            <th class="border p-2">Total</th>
+            <th class="border p-2">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="border p-2">#12345</td>
+            <td class="border p-2">Dec 5, 2024</td>
+            <td class="border p-2">₹1200</td>
+            <td class="border p-2 text-green-600">Delivered</td>
+          </tr>
+          <tr>
+            <td class="border p-2">#12344</td>
+            <td class="border p-2">Nov 28, 2024</td>
+            <td class="border p-2">₹850</td>
+            <td class="border p-2 text-yellow-600">Pending</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock account_section %}

@@ -1,0 +1,28 @@
+{% extends "account.html" %}
+
+{% block account_section %}
+<div id="profile" class="py-6">
+    <div class="container mx-auto max-w-4xl">
+      <h2 class="text-2xl font-bold mb-4">Your Profile</h2>
+      <form action="/update-profile/" method="POST" class="space-y-4">
+        <div class="flex gap-4">
+          <label class="flex-1">
+            <span class="block text-gray-700">Name</span>
+            <input type="text" name="name" value="John Doe" class="w-full border rounded-lg p-2" required>
+          </label>
+          <label class="flex-1">
+            <span class="block text-gray-700">Email</span>
+            <input type="email" name="email" value="john.doe@example.com" class="w-full border rounded-lg p-2" required>
+          </label>
+        </div>
+        <div>
+          <label>
+            <span class="block text-gray-700">Address</span>
+            <textarea name="address" class="w-full border rounded-lg p-2" rows="3">123 Main St, Springfield</textarea>
+          </label>
+        </div>
+        <button type="submit" class="bg-light font-bold py-2 px-4 rounded-lg hover:bg-primary hover:text-white">Save Changes</button>
+      </form>
+    </div>
+</div>
+{% endblock account_section %}

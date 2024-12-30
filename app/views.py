@@ -30,7 +30,16 @@ def contact(request):
     return render(request, 'contact.html')
 
 def account(request):
-    return render(request, 'account.html')
+    return render(request, 'profile.html')
+
+def orders(request):
+    return render(request, 'orders.html')
+
+def preferences(request):
+    return render(request, 'preferences.html')
+
+def logout(request):
+    return render(request, 'logout.html')
 
 def cart(request):
     return render(request, 'cart.html')
