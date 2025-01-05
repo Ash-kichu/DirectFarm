@@ -49,3 +49,6 @@ def signup(request):
 
 def login(request):
     return render(request, 'login.html')
+
+def how_it_works(request):
+    return render(request, 'how-it-works.html')
