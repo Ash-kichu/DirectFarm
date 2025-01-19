@@ -12,7 +12,7 @@
         <div class="container mx-auto">
           <h2 class="text-2xl font-bold">Your Cart is Empty</h2>
           <p class="mt-4">It looks like you haven't added anything to your cart yet.</p>
-          <a href="/products/" class="mt-6 inline-block bg-green-600 text-white font-bold py-2 px-4 rounded hover:bg-green-700">
+          <a href="{% url "shop" %}" class="mt-6 inline-block bg-green-600 text-white font-bold py-2 px-4 rounded hover:bg-green-700">
             Start Shopping
           </a>
         </div>
@@ -68,7 +68,7 @@
               <span>Total:</span>
               <span>₹315</span>
             </div>
-            <a href="/checkout/" class="block mt-4 text-center font-bold py-2 px-4 rounded bg-light hover:bg-primary hover:text-white">
+            <a href="{% url "checkout" %}" class="block mt-4 text-center font-bold py-2 px-4 rounded bg-light hover:bg-primary hover:text-white">
               Proceed to Checkout
             </a>
           </div>

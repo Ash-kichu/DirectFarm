@@ -12,11 +12,12 @@
   </div>
   <div class="py-10">
     <div class="container mx-auto max-w-md">
-      <form action="/login/" method="POST" class="space-y-6 bg-white p-8 border rounded-lg shadow-md">
-        <!-- Email -->
+      <form action="{% url "login" %}" method="POST" class="space-y-6 bg-white p-8 border rounded-lg shadow-md">
+        {% csrf_token %}
+        <!-- username -->
         <div>
-          <label for="email" class="block text-gray-700 font-semibold">Email Address</label>
-          <input type="email" id="email" name="email" required class="w-full border border-gray-300 rounded-lg p-3 mt-2" placeholder="Enter your email address">
+          <label for="username" class="block text-gray-700 font-semibold">Username</label>
+          <input type="text" id="username" name="username" required class="w-full border border-gray-300 rounded-lg p-3 mt-2" placeholder="Enter your username address">
         </div>
   
         <!-- Password -->
@@ -27,7 +28,7 @@
   
         <!-- Forgot Password Link -->
         <div class="text-right">
-          <a href="/forgot-password/" class="text-sm text-green-600 hover:underline">Forgot your password?</a>
+          <a href="{% url "forgot-password" %}" class="text-sm text-green-600 hover:underline">Forgot your password?</a>
         </div>
   
         <!-- Login Button -->
@@ -37,7 +38,7 @@
   
         <!-- Sign Up Link -->
         <div class="text-center">
-          <p class="text-sm text-gray-600">Don't have an account? <a href="/signup/" class="font-bold text-primary hover:underline">Sign up here</a></p>
+          <p class="text-sm text-gray-600">Don't have an account? <a href="{% url "signup" %}" class="font-bold text-primary hover:underline">Sign up here</a></p>
         </div>
       </form>
     </div>

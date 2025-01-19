@@ -1,7 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
+
+from .models import Product
 
 # Create your views here.
-def home(request):
+def home_view(request):
     reviews = [
         {
             "content": "DirectFarm has completely changed the way we buy produce. We love knowing exactly where our food is coming from, and everything we’ve ordered has been incredibly fresh. It feels great to support local farmers!", "author": "Customer"
@@ -17,38 +21,57 @@ def home(request):
 
     return render(request, 'home.html', context)
 
-def shop(request):
-    return render(request, 'shop.html')
+def shop_view(request):
+    products = Product.objects.all().order_by('category')
+    context = {
+        'products' : products,
+    }
+    return render(request, 'shop.html', context)
 
-def about(request):
+def about_view(request):
     return render(request, 'about.html')
 
-def farmers(request):
+def farmers_view(request):
     return render(request, 'farmers.html')
 
-def contact(request):
+def contact_view(request):
     return render(request, 'contact.html')
 
-def account(request):
+@login_required(login_url='/login')
+def account_view(request):
     return render(request, 'profile.html')
 
-def orders(request):
+def orders_view(request):
     return render(request, 'orders.html')
 
-def preferences(request):
+@login_required(login_url='login')
+def preferences_view(request):
     return render(request, 'preferences.html')
 
-def logout(request):
+def confirm_logout_view(request):
     return render(request, 'logout.html')
 
-def cart(request):
+def logout_view(request):
+    if request.method == 'POST':
+        print('Logging out')
+        logout(request)
+    return redirect(request.GET.get('next', '/'))
+
+def cart_view(request):
     return render(request, 'cart.html')
 
-def signup(request):
+def signup_view(request):
     return render(request, 'signup.html')
 
-def login(request):
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            # return redirect(request.POST.get('next', request.GET.get('next', '/')))
     return render(request, 'login.html')
 
-def how_it_works(request):
+def how_it_works_view(request):
     return render(request, 'how-it-works.html')

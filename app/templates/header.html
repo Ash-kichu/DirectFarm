@@ -8,10 +8,10 @@
         </a>
         <div class="hidden lg:flex gap-4 flex-1 items-center justify-evenly">
             <a class="" href="/">Home</a>
-            <a class="" href="/shop/">Shop</a>
-            <a class="" href="/about/">Our Story</a>
-            <a class="" href="/farmers/">Farmers</a>
-            <a class="" href="/contact/">Contact Us</a>
+            <a class="" href="{% url "shop" %}">Shop</a>
+            <a class="" href="{% url "about" %}">Our Story</a>
+            <a class="" href="{% url "farmers" %}">Farmers</a>
+            <a class="" href="{% url "contact" %}">Contact Us</a>
         </div>
         <div class="flex-1 relative">
             <input 
@@ -37,10 +37,10 @@
         </div>
         <div id="menuContainer" class="lg:hidden absolute top-20 right-0 p-4 bg-white shadow-lg min-w-52 flex flex-col gap-4 rounded-xl rounded-t-none">
             <a class="" href="/">Home</a>
-            <a class="" href="/shop/">Shop</a>
-            <a class="" href="/our-story/">Our Story</a>
-            <a class="" href="/farmers/">Farmers</a>
-            <a class="" href="/contact-us/">Contact Us</a>
+            <a class="" href="{% url "shop" %}">Shop</a>
+            <a class="" href="{% url "about" %}">Our Story</a>
+            <a class="" href="{% url "farmers" %}">Farmers</a>
+            <a class="" href="{% url "contact" %}">Contact Us</a>
         </div>
     </nav>
 </header>

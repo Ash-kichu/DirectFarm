@@ -45,188 +45,34 @@
         </div>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 bg-white p-4 rounded-xl">
-        <div class="flex flex-col gap-2">
-            <img src="{% static 'images/farmer.jpg' %}" alt="" class="w-auto inset-0 h-64 rounded-xl bg-light object-cover">
-            <div class="flex items-center justify-between cursor-pointer">
-                <h1 class="font-bold text-xl hover:underline">Sample Product</h1>
-                <h1 class="font-bold text-xl font-montserrat">$99</h1>
+        {% for product in products %}
+            <div class="flex flex-col gap-2">
+                <img src="{% static 'images/farmer.jpg' %}" alt="" class="w-auto inset-0 h-64 rounded-xl bg-light object-cover">
+                <div class="flex items-center justify-between cursor-pointer">
+                    <h1 class="font-bold text-xl hover:underline">{{product.name}}</h1>
+                    <h1 class="font-bold text-xl font-montserrat">₹{{product.price}}</h1>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-sm cursor-pointer hover:underline">{{product.category}}</span>
+                </div>
+                <div class="flex items-center justify-start cursor-pointer">
+                    <i class="fa-solid fa-star text-primary"></i>
+                    <i class="fa-solid fa-star text-primary"></i>
+                    <i class="fa-solid fa-star text-primary"></i>
+                    <i class="fa-solid fa-star text-primary"></i>
+                    <i class="fa-solid fa-star text-primary"></i>
+                    <span class="font-montserrat ml-2">(99)</span>
+                </div>
+                <div class="flex items-center justify-center gap-2">
+                    <button class="flex-1 font-bold border border-primary text-primary cursor-pointer hover:bg-light p-2 pl-3 pr-3 rounded-full transition-all duration-200">
+                        Add to cart
+                    </button>
+                    <button class="flex-1 font-bold border border-primary bg-primary text-white cursor-pointer hover:bg-dark p-2 pl-3 pr-3 rounded-full transition-all duration-200">
+                        Buy Now
+                    </button>
+                </div>
             </div>
-            <div class="flex items-center">
-                <span class="text-sm cursor-pointer hover:underline">Category</span>
-            </div>
-            <div class="flex items-center justify-start cursor-pointer">
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <span class="font-montserrat ml-2">(99)</span>
-            </div>
-            <div class="flex items-center justify-center gap-2">
-                <button class="flex-1 font-bold border border-primary text-primary cursor-pointer hover:bg-light p-2 pl-3 pr-3 rounded-full transition-all duration-200">
-                    Add to cart
-                </button>
-                <button class="flex-1 font-bold border border-primary bg-primary text-white cursor-pointer hover:bg-dark p-2 pl-3 pr-3 rounded-full transition-all duration-200">
-                    Buy Now
-                </button>
-            </div>
-        </div>
-        <div class="flex flex-col gap-2">
-            <img src="{% static 'images/farmer.jpg' %}" alt="" class="w-auto inset-0 h-64 rounded-xl bg-light object-cover">
-            <div class="flex items-center justify-between cursor-pointer">
-                <h1 class="font-bold text-xl hover:underline">Sample Product</h1>
-                <h1 class="font-bold text-xl font-montserrat">$99</h1>
-            </div>
-            <div class="flex items-center">
-                <span class="text-sm cursor-pointer hover:underline">Category</span>
-            </div>
-            <div class="flex items-center justify-start cursor-pointer">
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <span class="font-montserrat ml-2">(99)</span>
-            </div>
-            <div class="flex items-center justify-center gap-2">
-                <button class="flex-1 font-bold border border-primary text-primary cursor-pointer hover:bg-light p-2 pl-3 pr-3 rounded-full transition-all duration-200">
-                    Add to cart
-                </button>
-                <button class="flex-1 font-bold border border-primary bg-primary text-white cursor-pointer hover:bg-dark p-2 pl-3 pr-3 rounded-full transition-all duration-200">
-                    Buy Now
-                </button>
-            </div>
-        </div>
-        <div class="flex flex-col gap-2">
-            <img src="{% static 'images/farmer.jpg' %}" alt="" class="w-auto inset-0 h-64 rounded-xl bg-light object-cover">
-            <div class="flex items-center justify-between cursor-pointer">
-                <h1 class="font-bold text-xl hover:underline">Sample Product</h1>
-                <h1 class="font-bold text-xl font-montserrat">$99</h1>
-            </div>
-            <div class="flex items-center">
-                <span class="text-sm cursor-pointer hover:underline">Category</span>
-            </div>
-            <div class="flex items-center justify-start cursor-pointer">
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <span class="font-montserrat ml-2">(99)</span>
-            </div>
-            <div class="flex items-center justify-center gap-2">
-                <button class="flex-1 font-bold border border-primary text-primary cursor-pointer hover:bg-light p-2 pl-3 pr-3 rounded-full transition-all duration-200">
-                    Add to cart
-                </button>
-                <button class="flex-1 font-bold border border-primary bg-primary text-white cursor-pointer hover:bg-dark p-2 pl-3 pr-3 rounded-full transition-all duration-200">
-                    Buy Now
-                </button>
-            </div>
-        </div>
-        <div class="flex flex-col gap-2">
-            <img src="{% static 'images/farmer.jpg' %}" alt="" class="w-auto inset-0 h-64 rounded-xl bg-light object-cover">
-            <div class="flex items-center justify-between cursor-pointer">
-                <h1 class="font-bold text-xl hover:underline">Sample Product</h1>
-                <h1 class="font-bold text-xl font-montserrat">$99</h1>
-            </div>
-            <div class="flex items-center">
-                <span class="text-sm cursor-pointer hover:underline">Category</span>
-            </div>
-            <div class="flex items-center justify-start cursor-pointer">
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <span class="font-montserrat ml-2">(99)</span>
-            </div>
-            <div class="flex items-center justify-center gap-2">
-                <button class="flex-1 font-bold border border-primary text-primary cursor-pointer hover:bg-light p-2 pl-3 pr-3 rounded-full transition-all duration-200">
-                    Add to cart
-                </button>
-                <button class="flex-1 font-bold border border-primary bg-primary text-white cursor-pointer hover:bg-dark p-2 pl-3 pr-3 rounded-full transition-all duration-200">
-                    Buy Now
-                </button>
-            </div>
-        </div>
-        <div class="flex flex-col gap-2">
-            <img src="{% static 'images/farmer.jpg' %}" alt="" class="w-auto inset-0 h-64 rounded-xl bg-light object-cover">
-            <div class="flex items-center justify-between cursor-pointer">
-                <h1 class="font-bold text-xl hover:underline">Sample Product</h1>
-                <h1 class="font-bold text-xl font-montserrat">$99</h1>
-            </div>
-            <div class="flex items-center">
-                <span class="text-sm cursor-pointer hover:underline">Category</span>
-            </div>
-            <div class="flex items-center justify-start cursor-pointer">
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <span class="font-montserrat ml-2">(99)</span>
-            </div>
-            <div class="flex items-center justify-center gap-2">
-                <button class="flex-1 font-bold border border-primary text-primary cursor-pointer hover:bg-light p-2 pl-3 pr-3 rounded-full transition-all duration-200">
-                    Add to cart
-                </button>
-                <button class="flex-1 font-bold border border-primary bg-primary text-white cursor-pointer hover:bg-dark p-2 pl-3 pr-3 rounded-full transition-all duration-200">
-                    Buy Now
-                </button>
-            </div>
-        </div>
-        <div class="flex flex-col gap-2">
-            <img src="{% static 'images/farmer.jpg' %}" alt="" class="w-auto inset-0 h-64 rounded-xl bg-light object-cover">
-            <div class="flex items-center justify-between cursor-pointer">
-                <h1 class="font-bold text-xl hover:underline">Sample Product</h1>
-                <h1 class="font-bold text-xl font-montserrat">$99</h1>
-            </div>
-            <div class="flex items-center">
-                <span class="text-sm cursor-pointer hover:underline">Category</span>
-            </div>
-            <div class="flex items-center justify-start cursor-pointer">
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <span class="font-montserrat ml-2">(99)</span>
-            </div>
-            <div class="flex items-center justify-center gap-2">
-                <button class="flex-1 font-bold border border-primary text-primary cursor-pointer hover:bg-light p-2 pl-3 pr-3 rounded-full transition-all duration-200">
-                    Add to cart
-                </button>
-                <button class="flex-1 font-bold border border-primary bg-primary text-white cursor-pointer hover:bg-dark p-2 pl-3 pr-3 rounded-full transition-all duration-200">
-                    Buy Now
-                </button>
-            </div>
-        </div>
-        <div class="flex flex-col gap-2">
-            <img src="{% static 'images/farmer.jpg' %}" alt="" class="w-auto inset-0 h-64 rounded-xl bg-light object-cover">
-            <div class="flex items-center justify-between cursor-pointer">
-                <h1 class="font-bold text-xl hover:underline">Sample Product</h1>
-                <h1 class="font-bold text-xl font-montserrat">$99</h1>
-            </div>
-            <div class="flex items-center">
-                <span class="text-sm cursor-pointer hover:underline">Category</span>
-            </div>
-            <div class="flex items-center justify-start cursor-pointer">
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <i class="fa-solid fa-star text-primary"></i>
-                <span class="font-montserrat ml-2">(99)</span>
-            </div>
-            <div class="flex items-center justify-center gap-2">
-                <button class="flex-1 font-bold border border-primary text-primary cursor-pointer hover:bg-light p-2 pl-3 pr-3 rounded-full transition-all duration-200">
-                    Add to cart
-                </button>
-                <button class="flex-1 font-bold border border-primary bg-primary text-white cursor-pointer hover:bg-dark p-2 pl-3 pr-3 rounded-full transition-all duration-200">
-                    Buy Now
-                </button>
-            </div>
-        </div>
+        {% endfor %}
     </div>
     
 </section>

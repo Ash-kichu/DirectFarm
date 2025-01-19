@@ -1,8 +1,9 @@
 {% extends "account.html" %}
 
 {% block account_section %}
-<div id="logout" class="py-6 text-center flex flex-col gap-4 items-center">
+<form id="logout" action="/logout/" method="POST" class="py-6 text-center flex flex-col gap-4 items-center">
+  {% csrf_token %}
   <p>Are you sure logging out?</p>
-  <a href="/logout/" class="bg-red-600 text-white font-bold py-2 px-4 rounded hover:bg-red-700 w-fit">Logout</a>
-</div>  
+  <button type="submit" class="bg-red-600 text-white font-bold py-2 px-4 rounded hover:bg-red-700 w-fit">Logout</button>
+</form>  
 {% endblock account_section %}
