@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static custom_tags %}
+
 
 {% block title %}DirectFarm | Shop{% endblock title %}
 {% block main_content %}
@@ -59,13 +60,16 @@
                 <div class="flex items-center">
                     <span class="text-sm cursor-pointer hover:underline">{{product.category}}</span>
                 </div>
+                
                 <div class="flex items-center justify-start cursor-pointer">
-                    <i class="fa-solid fa-star text-primary"></i>
-                    <i class="fa-solid fa-star text-primary"></i>
-                    <i class="fa-solid fa-star text-primary"></i>
-                    <i class="fa-solid fa-star text-primary"></i>
-                    <i class="fa-solid fa-star text-primary"></i>
-                    <span class="font-montserrat ml-2">(99)</span>
+                    {% for number in 5|range_filter %}
+                        {% if number < product.rating %}
+                            <i class="fa-solid fa-star text-primary"></i>
+                        {% else %}
+                            <i class="fa-solid fa-star text-light"></i>
+                        {% endif %}
+                    {% endfor %}
+                    {% comment %} <span class="font-montserrat ml-2">(99)</span> {% endcomment %}
                 </div>
                 <div class="flex items-center justify-center gap-2">
                     <button class="flex-1 font-bold border border-primary text-primary cursor-pointer hover:bg-light p-2 pl-3 pr-3 rounded-full transition-all duration-200">
