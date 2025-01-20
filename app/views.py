@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
+from django.db.models import F
 
 from .models import Product
 
@@ -22,7 +23,8 @@ def home_view(request):
     return render(request, 'home.html', context)
 
 def shop_view(request):
-    products = Product.objects.all().order_by('category')
+    products =Product.objects.annotate(final_price=F('price') - F('offer_price')).order_by('category')
+    
     context = {
         'products' : products,
     }
