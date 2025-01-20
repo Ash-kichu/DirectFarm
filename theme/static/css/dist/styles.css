@@ -1651,10 +1651,6 @@ select {
   color: rgb(137 207 181 / var(--tw-text-opacity));
 }
 
-.line-through {
-  text-decoration-line: line-through;
-}
-
 .opacity-50 {
   opacity: 0.5;
 }
