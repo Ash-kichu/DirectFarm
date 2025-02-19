@@ -1,12 +1,13 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, User as AuthUser
+from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-class User(AbstractUser):
+class Profile(models.Model):
     USER_TYPE_CHOICES = [
         ('Farmer', 'Farmer'),
         ('Customer', 'Customer'),
     ]
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES)
     GENDER_CHOICES = [
         ('Male', 'Male'),
@@ -22,36 +23,9 @@ class User(AbstractUser):
     farm_description = models.TextField(blank=True, null=True)
     profile_picture = models.ImageField(upload_to='farmer_profiles/', blank=True, null=True)
     joined_at = models.DateTimeField(auto_now_add=True)
-    auth_user = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='custom_user', null=True, blank=True)
-    groups = models.ManyToManyField(
-        'auth.Group',
-        related_name='custom_user_set',  # Add related_name to avoid clash
-        blank=True,
-        help_text='The groups this user belongs to.',
-        verbose_name='groups',
-    )
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        related_name='custom_user_set',  # Add related_name to avoid clash
-        blank=True,
-        help_text='Specific permissions for this user.',
-        verbose_name='user permissions',
-    )
-
-    def save(self, *args, **kwargs):
-        if not self.auth_user:
-            auth_user = AuthUser.objects.create_user(
-                username=self.username,
-                email=self.email,
-                password=self.password,
-                first_name=self.first_name,
-                last_name=self.last_name
-            )
-            self.auth_user = auth_user
-        super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.get_full_name() or self.username
+        return self.user.username
 
 class Product(models.Model):
     name = models.CharField(max_length=100)
@@ -72,7 +46,7 @@ class Product(models.Model):
     category = models.CharField(max_length=50, choices=PRODUCT_CATEGORIES, default='Others')
     availability = models.BooleanField(default=True)
     stock_quantity = models.PositiveIntegerField()
-    farmer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='products')
+    farmer = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='products')
     image = models.ImageField(upload_to='product_images/', blank=True, null=True)
     rating = models.PositiveSmallIntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
     created_at = models.DateTimeField(auto_now_add=True)
@@ -87,11 +61,11 @@ class Product(models.Model):
         return self.name
 
 class Cart(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='cart')
+    user = models.OneToOneField(Profile, on_delete=models.CASCADE, related_name='cart')
     products = models.ManyToManyField(Product, through='CartItem')
 
     def __str__(self):
-        return f"Cart of {self.user.username}"
+        return f"Cart of {self.user.user.username}"
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
@@ -100,10 +74,10 @@ class CartItem(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.product.name} in cart of {self.cart.user.username}"
+        return f"{self.product.name} in cart of {self.cart.user.user.username}"
 
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='orders')
     products = models.ManyToManyField(Product, through='OrderItem')
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -127,10 +101,10 @@ class Order(models.Model):
     payment_status = models.CharField(max_length=20, default='Pending')
     transaction_id = models.CharField(max_length=100, unique=True, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Order {self.id} by {self.user.username}"
+        return f"Order {self.id} by {self.user.user.username}"
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)

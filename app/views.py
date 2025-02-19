@@ -1,9 +1,12 @@
+from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import F
-from .models import User
+from .models import Profile
+from django.contrib.auth.models import User
 from django.contrib import messages
+from datetime import datetime
 
 from .models import Product
 
@@ -81,31 +84,45 @@ def signup_view(request):
         farm_name = request.POST.get('farm_name', '')
         farm_description = request.POST.get('farm_description', '')
 
+        # Validate date of birth format
+        try:
+            datetime.strptime(dob, '%Y-%m-%d')
+        except ValueError:
+            messages.error(request, 'Invalid date format. It must be in YYYY-MM-DD format.')
+            return render(request, 'signup.html', {'messages': messages.get_messages(request)})
+
         if User.objects.filter(username=username).exists():
             messages.error(request, 'Username already exists')
         elif User.objects.filter(email=email).exists():
             messages.error(request, 'Email already exists')
+        elif Profile.objects.filter(phone=phone).exists():
+            messages.error(request, 'Phone number already exists')
         else:
-            user = User.objects.create_user(
-                username=username,
-                first_name=first_name,
-                last_name=last_name,
-                email=email,
-                password=password,
-                user_type=user_type,
-                gender=gender,
-                dob=dob,
-                phone=phone,
-                address=address,
-                location=location,
-                farm_name=farm_name,
-                farm_description=farm_description,
-                profile_picture=profile_picture
-            )
-            user.save()
-            login(request, user)
-            messages.success(request, 'Account created successfully')
-            return redirect('home')
+            try:
+                user = User.objects.create_user(
+                    username=username,
+                    first_name=first_name,
+                    last_name=last_name,
+                    email=email,
+                    password=password
+                )
+                Profile.objects.create(
+                    user=user,
+                    user_type=user_type,
+                    gender=gender,
+                    dob=dob,
+                    phone=phone,
+                    address=address,
+                    location=location,
+                    farm_name=farm_name,
+                    farm_description=farm_description,
+                    profile_picture=profile_picture
+                )
+                login(request, user)
+                messages.success(request, 'Account created successfully')
+                return redirect('home')
+            except IntegrityError:
+                messages.error(request, 'Username already exists')
 
     return render(request, 'signup.html', {'messages': messages.get_messages(request)})
 

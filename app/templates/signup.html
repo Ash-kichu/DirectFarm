@@ -3,7 +3,7 @@
 
 {% block title %}DirectFarm | Sign Up{% endblock title %}
 {% block main_content %}
-<section class="flex flex-col gap-4 py-6">
+<section class="flex flex-col gap-4 py-6 w-full">
   <div class="py-6">
     <div class="container mx-auto text-center">
       <h1 class="text-3xl font-bold">Create an Account</h1>
@@ -11,7 +11,7 @@
     </div>
   </div>
   <div class="py-10">
-    <div class="container mx-auto max-w-lg">
+    <div class="container mx-auto w-2/3">
       <form id="signup-form" action="/signup/" method="POST" class="space-y-4 bg-white p-6 border rounded-lg shadow-md">
         {% csrf_token %}
         <!-- Username, First Name, Last Name -->
@@ -49,7 +49,7 @@
           </div>
           <div class="w-1/3">
             <label for="dob" class="block text-gray-700 font-semibold">Date of Birth</label>
-            <input type="date" id="dob" name="dob" required class="w-full border border-gray-300 rounded-lg p-2 mt-1">
+            <input type="date" id="dob" name="dob" required class="w-full border border-gray-300 rounded-lg p-2 mt-1" placeholder="YYYY-MM-DD">
           </div>
         </div>
 
