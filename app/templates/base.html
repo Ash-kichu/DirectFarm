@@ -15,10 +15,21 @@
     {% block styles %}{% endblock styles %}
     {% tailwind_css %}
 </head>
-<body class="flex flex-col text-primary justify-between font-raleway relative">
+<body class="w-screen h-screen flex flex-col text-primary justify-between font-raleway relative">
 
     <!-- Include header template -->
     {% include "header.html" %}
+    
+    <!-- Messages Section -->
+    {% if messages %}
+        <div class="fixed bottom-0 right-0 flex items-center justify-center ml-12 z-50 p-12 animate-slideInLeft" id="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} p-4 mb-4 rounded-lg shadow-md">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
       
     <!-- Main Content Section-->
     <main class="flex-1 p-4 md:p-12 mt-16">
@@ -64,6 +75,14 @@
         }
           lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // Ensure it doesn't go negative
         });
+
+        // Hide messages after 3 seconds
+        setTimeout(function() {
+            const messages = document.getElementById('messages');
+            if (messages) {
+                messages.style.display = 'none';
+            }
+        }, 3000);
     </script>
 </body>
 </html>
