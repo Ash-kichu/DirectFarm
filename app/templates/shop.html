@@ -48,25 +48,27 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 bg-white p-4 rounded-xl">
         {% for product in products %}
             <div class="flex flex-col gap-2">
-                <img src="{% static 'images/farmer.jpg' %}" alt="" class="w-auto inset-0 h-64 rounded-xl bg-light object-cover">
+                <img src="{% static product.image %}" alt="" class="w-auto inset-0 h-64 rounded-xl bg-light object-cover">
                 <div class="flex items-center justify-between cursor-pointer">
                     <h1 class="font-bold text-xl hover:underline">{{product.name}}</h1>
                     <h1 class="line-through font-bold text-xl font-montserrat">₹{{product.price}}</h1>
                     <h1 class="font-bold text-xl font-montserrat">₹{{ product.final_price}}</h1>
                 </div>
-                <div class="flex items-center">
-                    <span class="text-sm cursor-pointer hover:underline">{{product.farmer}}</span>
-                </div>
-                <div class="flex items-center">
+                 <div class="flex items-center">
                     <span class="text-sm cursor-pointer hover:underline">{{product.category}}</span>
                 </div>
+                <div class="flex items-center">
+                    <span class="text-sm cursor-pointer">Farmer: &nbsp;</span>
+                    <span class="text-sm cursor-pointer hover:underline">{{product.farmer}}</span>
+                </div>
+               
                 
                 <div class="flex items-center justify-start cursor-pointer">
                     {% for number in 5|range_filter %}
                         {% if number < product.rating %}
-                            <i class="fa-solid fa-star text-primary"></i>
+                            <i class="fa-solid fa-star text-orange-400"></i>
                         {% else %}
-                            <i class="fa-solid fa-star text-light"></i>
+                            <i class="fa-solid fa-star text-green"></i>
                         {% endif %}
                     {% endfor %}
                     {% comment %} <span class="font-montserrat ml-2">(99)</span> {% endcomment %}
