@@ -26,9 +26,9 @@ SECRET_KEY = 'django-insecure-hqjhci*2-+gc-!_3k&h@v6qgzgl=*7+7fvwd3&m9q&n9)1bx@n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-NPM_BIN_PATH = r'C:\Program Files\nodejs\npm.cmd'
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-ALLOWED_HOSTS = []
+NPM_BIN_PATH = r'C:\Program Files\nodejs\npm.cmd'
 
 
 # Application definition
@@ -135,7 +135,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
