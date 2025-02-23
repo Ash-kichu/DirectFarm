@@ -37,23 +37,20 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='subcategories', blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
 class Product(models.Model):
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     offer_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     offer_percentage = models.PositiveSmallIntegerField(validators=[MaxValueValidator(100)], blank=True, null=True)
     description = models.TextField()
-    PRODUCT_CATEGORIES = [
-        ('Vegetables', 'Vegetables'),
-        ('Fruits', 'Fruits'),
-        ('Grains', 'Grains'),
-        ('Dairy', 'Dairy'),
-        ('Honey', 'Honey'),
-        ('Oil', 'Oil'),
-        ('Eggs', 'Eggs'),
-        ('Others', 'Others'),
-    ]
-    category = models.CharField(max_length=50, choices=PRODUCT_CATEGORIES, default='Others')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     availability = models.BooleanField(default=True)
     stock_quantity = models.PositiveIntegerField()
     farmer = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='products')
@@ -70,6 +67,14 @@ class Product(models.Model):
         if self.farmer.user_type != 'Farmer':
             raise ValueError("Only users of type 'Farmer' can create products.")
         super().save(*args, **kwargs)
+
+    def update_rating(self):
+        reviews = self.reviews.all()
+        if reviews.exists():
+            self.rating = sum(review.rating for review in reviews) / reviews.count()
+        else:
+            self.rating = 0
+        self.save()
 
     def __str__(self):
         return self.name
@@ -129,4 +134,14 @@ class OrderItem(models.Model):
     
     def __str__(self):
         return f"{self.product.name} in order {self.order.id}"
+
+class Review(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    comment = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Review of {self.product.name} by {self.user.username}"
 

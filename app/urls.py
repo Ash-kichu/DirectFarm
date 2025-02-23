@@ -16,7 +16,7 @@ urlpatterns = [
     path('account/logout/', views.confirm_logout_view, name='confirm-logout'),
     path('account/products/', views.products_view, name='products'),
     path('account/cart/', views.cart_view, name='cart'),
-    path('checkout/', views.cart_view, name='checkout'),
+    path('checkout/', views.checkout_view, name='checkout'),
     path('signup/', views.signup_view, name='signup'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
@@ -29,6 +29,13 @@ urlpatterns = [
     path('product/<int:product_id>/', views.product_detail_view, name='product_detail'),
     path('add_to_cart/<int:product_id>/', views.add_to_cart_view, name='add_to_cart'),
     path('remove_from_cart/<int:cart_item_id>/', views.remove_from_cart_view, name='remove_from_cart'),
+    path('cart/increment/<int:item_id>/', views.increment_quantity, name='increment_quantity'),
+    path('cart/decrement/<int:item_id>/', views.decrement_quantity, name='decrement_quantity'),
+    path('buy_now/<int:product_id>/', views.buy_now_view, name='buy_now'),
+    path('customer-orders/', views.customer_orders_view, name='customer_orders'),
+    path('account/customer_orders/', views.customer_orders_view, name='customer_orders'),
+    path('account/categories/', views.categories_view, name='categories'),
+    path('account/categories/add/', views.add_category_view, name='add_category'),
 ]
 
 handler404 = 'app.views.custom_404'

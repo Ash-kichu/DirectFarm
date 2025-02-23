@@ -26,10 +26,6 @@
                     {% endif %}
                 </a>
             </div>
-            <div class="flex items-center gap-4">
-                <span class="font-bold text-2xl font-montserrat text-primary">₹{{ product.offer_price }}</span>
-                <span class="line-through text-lg text-secondary">₹{{ product.price }}</span>
-            </div>
             <div class="flex items-center gap-2">
                 <span class="text-sm">Rating: </span>
                 <div class="flex items-center">
@@ -42,6 +38,10 @@
                     {% endfor %}
                 </div>
             </div>
+            <div class="flex items-center gap-4">
+                <span class="font-bold text-2xl font-montserrat text-primary">₹{{ product.offer_price }}</span>
+                <span class="line-through text-lg text-secondary">₹{{ product.price }}</span>
+            </div>
             <p class="text-lg">{{ product.description }}</p>
             <div class="flex items-center justify-center gap-4 mt-4 text-center">
                 <a href="{% url 'add_to_cart' product.id %}" class="flex-1 font-bold border border-primary text-primary cursor-pointer hover:bg-light p-2 pl-3 pr-3 rounded-full transition-all duration-200">
@@ -53,6 +53,60 @@
             </div>
         </div>
     </div>
+    <div class="mt-8">
+        <h2 class="font-bold text-2xl font-montserrat">Reviews</h2>
+        {% if product.reviews.exists %}
+            <div class="flex flex-col gap-4 mt-4">
+                {% for review in product.reviews.all %}
+                    <div class="p-4 bg-gray-100 rounded-xl">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold">{{ review.user.username }}</span>
+                                <div class="flex items-center justify-start cursor-pointer">
+                                    {% for number in 5|range_filter %}
+                                        {% if number < review.rating %}
+                                            <i class="fa-solid fa-star text-primary"></i>
+                                        {% else %}
+                                            <i class="fa-solid fa-star text-secondary"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <span class="text-sm text-gray-500">{{ review.created_at|date:"M d, Y" }}</span>
+                        </div>
+                        <p class="mt-2">{{ review.comment }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="mt-4">No reviews yet.</p>
+        {% endif %}
+    </div>
+    {% if user.is_authenticated %}
+        <div class="mt-8">
+            <h2 class="font-bold text-2xl font-montserrat">Add a Review</h2>
+            <form method="post" class="flex flex-col gap-4 mt-4">
+                {% csrf_token %}
+                <div class="flex flex-col gap-2">
+                    <label for="rating" class="font-bold">Rating</label>
+                    <select name="rating" id="rating" class="p-2 border border-gray-300 rounded-lg">
+                        <option value="1">1 Star</option>
+                        <option value="2">2 Stars</option>
+                        <option value="3">3 Stars</option>
+                        <option value="4">4 Stars</option>
+                        <option value="5">5 Stars</option>
+                    </select>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label for="comment" class="font-bold">Comment</label>
+                    <textarea name="comment" id="comment" rows="4" class="p-2 border border-gray-300 rounded-lg"></textarea>
+                </div>
+                <button type="submit" class="mt-4 bg-primary text-white py-2 px-4 rounded-lg">Submit Review</button>
+            </form>
+        </div>
+    {% else %}
+        <p class="mt-4">Please <a href="{% url 'login' %}" class="text-primary">login</a> to add a review.</p>
+    {% endif %}
     <div class="mt-8">
         <h2 class="text-3xl font-bold mb-8 text-center">Similar Products</h2>
         {% if similar_products|length > 0 %}

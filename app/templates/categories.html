@@ -1,0 +1,30 @@
+{% extends "account.html" %}
+
+{% block account_section %}
+<div id="categories" class="py-6">
+  <div class="container mx-auto w-full">
+    <h2 class="text-2xl font-bold mb-4">Categories</h2>
+    <a href="{% url 'add_category' %}" class="bg-primary text-white py-2 px-4 rounded-lg mb-4 inline-block">Add Category</a>
+    <div class="overflow-x-auto">
+      <table class="w-full border-collapse border border-gray-300 text-center">
+        <thead class="bg-primary text-white">
+          <tr>
+            <th class="border p-2">Category ID</th>
+            <th class="border p-2">Name</th>
+            <th class="border p-2">Parent Category</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for category in categories %}
+          <tr>
+            <td class="border p-2">{{ category.id }}</td>
+            <td class="border p-2">{{ category.name }}</td>
+            <td class="border p-2">{% if category.parent %}{{ category.parent.name }}{% else %}None{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock account_section %}

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Cart, CartItem, Order, OrderItem, Profile
+from .models import Product, Cart, CartItem, Order, OrderItem, Profile, Category, Review
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -34,3 +34,14 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'user_type', 'gender', 'phone', 'location', 'joined_at')
     list_filter = ('user_type', 'gender', 'joined_at')
     search_fields = ('user__username', 'user__email', 'phone')
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'parent')
+    search_fields = ('name',)
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ('product', 'user', 'rating', 'created_at')
+    list_filter = ('rating', 'created_at')
+    search_fields = ('product__name', 'user__username')

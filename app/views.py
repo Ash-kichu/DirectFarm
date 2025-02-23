@@ -1,5 +1,5 @@
 from django.db import IntegrityError
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from .models import Profile
@@ -7,8 +7,9 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from datetime import datetime
 from django.core.exceptions import ValidationError
+from django.views.decorators.http import require_POST
 
-from .models import Product, Cart, CartItem, Order, OrderItem
+from .models import Product, Cart, CartItem, Order, OrderItem, Review, Category
 
 # Home page view
 def home_view(request):
@@ -30,10 +31,11 @@ def home_view(request):
 # Shop page view
 def shop_view(request):
     products = Product.objects.all().order_by('created_at')
+    categories = Category.objects.filter(parent__isnull=True)
 
-    category = request.GET.get('category')
-    if category:
-        products = products.filter(category=category)
+    category_id = request.GET.get('category')
+    if category_id:
+        products = products.filter(category_id=category_id)
 
     delivery_region = request.GET.get('delivery_region')
     if delivery_region:
@@ -48,19 +50,27 @@ def shop_view(request):
     if rating:
         products = products.filter(rating__gte=rating)
 
+    farmer = request.GET.get('farmer')
+    if farmer:
+        products = products.filter(farmer_id=farmer)
+
     sort_by = request.GET.get('sort_by')
+    print(sort_by)
     if sort_by == 'price':
-        products = products.order_by('price')
+        products = products.order_by('offer_price')
     elif sort_by == 'rating':
         products = products.order_by('-rating')
     else:
         products = products.order_by('-created_at')
 
-    similar_products = Product.objects.filter(category=category).exclude(id__in=products.values_list('id', flat=True))[:4]
+    similar_products = Product.objects.filter(category__id=category_id).exclude(id__in=products.values_list('id', flat=True))[:4]
+    farmers = Profile.objects.filter(user_type='Farmer')
 
     context = {
         'products': products,
-        'similar_products': similar_products
+        'similar_products': similar_products,
+        'farmers': farmers,
+        'categories': categories
     }
     return render(request, 'shop.html', context)
 
@@ -155,7 +165,8 @@ def products_view(request):
 def add_product(request):
     if request.method == 'POST':
         name = request.POST.get('name')
-        category = request.POST.get('category')
+        category_id = request.POST.get('category')
+        category = Category.objects.get(id=category_id)
         price = request.POST.get('price')
         stock_quantity = request.POST.get('stock_quantity')
         description = request.POST.get('description')
@@ -165,7 +176,7 @@ def add_product(request):
 
         if not all([name, category, price, stock_quantity, description, image]):
             messages.error(request, 'All fields are required.')
-            return render(request, 'add_product.html')
+            return render(request, 'add_product.html', {'categories': Category.objects.all()})
 
         try:
             price = float(price)
@@ -173,7 +184,7 @@ def add_product(request):
             offer_percentage = int(offer_percentage) if offer_percentage else None
         except ValueError:
             messages.error(request, 'Invalid price, stock quantity, offer price, or offer percentage.')
-            return render(request, 'add_product.html')
+            return render(request, 'add_product.html', {'categories': Category.objects.all()})
 
         product = Product(
             name=name,
@@ -194,9 +205,9 @@ def add_product(request):
             return redirect('products')
         except ValidationError as e:
             messages.error(request, e.message_dict)
-            return render(request, 'add_product.html')
+            return render(request, 'add_product.html', {'categories': Category.objects.all()})
 
-    return render(request, 'add_product.html')
+    return render(request, 'add_product.html', {'categories': Category.objects.all()})
 
 @login_required(login_url='/login/?next=/account/')
 def edit_product(request, product_id):
@@ -257,6 +268,15 @@ def delete_product(request, product_id):
 def product_detail_view(request, product_id):
     product = Product.objects.get(id=product_id)
     similar_products = Product.objects.filter(category=product.category).exclude(id=product_id)[:4]
+
+    if request.method == 'POST':
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+        Review.objects.create(product=product, user=request.user, rating=rating, comment=comment)
+        product.update_rating()
+        messages.success(request, 'Review added successfully!')
+        return redirect('product_detail', product_id=product_id)
+
     context = {
         'product': product,
         'similar_products': similar_products
@@ -281,11 +301,14 @@ def cart_view(request):
     cart, created = Cart.objects.get_or_create(user=request.user.profile)
     cart_items = CartItem.objects.filter(cart=cart)
     context = {'cart_items': cart_items}
-    return render(request, 'account/cart.html', context)
+    return render(request, 'cart.html', context)
 
 @login_required(login_url='/login/?next=/cart/')
 def add_to_cart_view(request, product_id):
     product = Product.objects.get(id=product_id)
+    if request.user.profile.user_type == 'Farmer' and product.farmer == request.user.profile:
+        messages.error(request, 'You cannot add your own product to the cart.')
+        return redirect(request.META.get('HTTP_REFERER', 'shop'))
     cart, created = Cart.objects.get_or_create(user=request.user.profile)
     cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
     if not created:
@@ -300,6 +323,43 @@ def remove_from_cart_view(request, cart_item_id):
     cart_item.delete()
     messages.success(request, f'{cart_item.product.name} removed from cart.')
     return redirect('cart')
+
+@login_required(login_url='/login/?next=/cart/')
+def increment_quantity(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id)
+    cart_item.quantity += 1
+    cart_item.save()
+    return redirect('cart')
+
+@login_required(login_url='/login/?next=/cart/')
+def decrement_quantity(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id)
+    if cart_item.quantity > 1:
+        cart_item.quantity -= 1
+        cart_item.save()
+    return redirect('cart')
+
+@login_required(login_url='/login/?next=/checkout/')
+def checkout_view(request):
+    cart = get_object_or_404(Cart, user=request.user.profile)
+    cart_items = CartItem.objects.filter(cart=cart)
+    
+    if request.method == 'POST':
+        total_price = sum(item.product.offer_price * item.quantity for item in cart_items)
+        order = Order.objects.create(user=request.user.profile, total_price=total_price)
+        for item in cart_items:
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.quantity,
+                price=item.product.offer_price
+            )
+        cart_items.delete()
+        messages.success(request, 'Order placed successfully!')
+        return redirect('orders')
+    
+    context = {'cart_items': cart_items}
+    return render(request, 'checkout.html', context)
 
 # Checkout view
 def signup_view(request):
@@ -394,3 +454,64 @@ def how_it_works_view(request):
 
 def custom_404(request, exception):
     return render(request, '404.html', status=404)
+
+@require_POST
+@login_required(login_url='/login/?next=/checkout/')
+def buy_now_view(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    if request.user.profile.user_type == 'Farmer' and product.farmer == request.user.profile:
+        messages.error(request, 'You cannot buy your own product.')
+        return redirect(request.META.get('HTTP_REFERER', 'shop'))
+    cart, created = Cart.objects.get_or_create(user=request.user.profile)
+    cart.cartitem_set.all().delete()  # Clear the cart
+    CartItem.objects.create(cart=cart, product=product, quantity=1)
+    return redirect('checkout')
+
+@login_required(login_url='/login/?next=/account/')
+def customer_orders_view(request):
+    if request.user.profile.user_type != 'Farmer':
+        messages.error(request, 'You do not have permission to view this page.')
+        return redirect('account')
+
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        order = Order.objects.filter(id=order_id, orderitem__product__farmer=request.user.profile).distinct().first()
+        if order:
+            order.status = 'Completed'
+            order.save()
+            messages.success(request, f'Order {order_id} marked as completed.')
+        else:
+            messages.error(request, 'Order not found or you do not have permission to update this order.')
+
+    orders = Order.objects.filter(orderitem__product__farmer=request.user.profile).distinct()
+    context = {'orders': orders}
+    return render(request, 'customer_orders.html', context)
+
+@login_required(login_url='/login/?next=/account/')
+def categories_view(request):
+    if request.user.profile.user_type != 'Farmer':
+        messages.error(request, 'You do not have permission to view this page.')
+        return redirect('account')
+
+    categories = Category.objects.all()
+    context = {'categories': categories}
+    return render(request, 'categories.html', context)
+
+@login_required(login_url='/login/?next=/account/')
+def add_category_view(request):
+    if request.user.profile.user_type != 'Farmer':
+        messages.error(request, 'You do not have permission to view this page.')
+        return redirect('account')
+
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        parent_id = request.POST.get('parent')
+        parent = Category.objects.get(id=parent_id) if parent_id else None
+
+        Category.objects.create(name=name, parent=parent)
+        messages.success(request, 'Category added successfully.')
+        return redirect('categories')
+
+    categories = Category.objects.all()
+    context = {'categories': categories}
+    return render(request, 'add_category.html', context)

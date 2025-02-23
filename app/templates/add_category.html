@@ -1,0 +1,29 @@
+{% extends "account.html" %}
+
+{% block account_section %}
+<div id="add-category" class="py-6">
+  <div class="container mx-auto w-full">
+    <h2 class="text-2xl font-bold mb-4">Add Category</h2>
+    <form method="post" class="flex flex-col gap-4">
+      {% csrf_token %}
+      <div class="flex flex-col gap-2">
+        <label for="name" class="font-bold">Category Name</label>
+        <input type="text" name="name" id="name" class="p-2 border border-gray-300 rounded-lg" required>
+      </div>
+      <div class="flex flex-col gap-2">
+        <label for="parent" class="font-bold">Parent Category (optional)</label>
+        <select name="parent" id="parent" class="p-2 border border-gray-300 rounded-lg">
+          <option value="">None</option>
+          {% for category in categories %}
+            <option value="{{ category.id }}">{{ category.name }}</option>
+            {% for subcategory in category.subcategories.all %}
+              <option value="{{ subcategory.id }}">&nbsp;&nbsp;&nbsp;{{ subcategory.name }}</option>
+            {% endfor %}
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="mt-4 bg-primary text-white py-2 px-4 rounded-lg">Add Category</button>
+    </form>
+  </div>
+</div>
+{% endblock account_section %}
