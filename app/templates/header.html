@@ -27,10 +27,10 @@
             </a>
         </div>
         <div class="flex items-center gap-1 md:gap-4">
-            <a class="w-8" href="/account">
+            <a class="w-8" href="{% url "account" %}">
                 <img src="{% static 'images/user.png' %}" alt="">
             </a>
-            <a class="w-8" href="/cart">
+            <a class="w-8" href="{% url "cart" %}">
                 <img src="{% static 'images/cart.png' %}" alt="">
             </a>
             <img id="menuButton" class="w-8 cursor-pointer lg:hidden" src="{% static 'images/menu.png' %}" alt="">

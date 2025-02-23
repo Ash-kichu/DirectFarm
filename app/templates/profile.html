@@ -3,7 +3,11 @@
 
 {% block account_section %}
 <div id="profile" class="py-2">
-    <div class="container mx-auto max-w-4xl">
+  <div class="container mx-auto text-center">
+    <h1 class="text-3xl font-bold">Welcome, {{user}}!</h1>
+    <p class="mt-2">Manage your account, orders, and products here.</p>
+  </div>
+    <div class="container mx-auto w-full">
       <form action="{% url 'update_profile' %}" method="POST" enctype="multipart/form-data" class="space-y-4">
         {% csrf_token %}
         <div class="text-center mb-4">
@@ -44,7 +48,14 @@
           </label>
           <label class="flex-1">
             <span class="block text-gray-700">Location</span>
-            <input type="text" name="location" value="{{ profile.location }}" class="w-full border rounded-lg p-2" required>
+            <select id="location" name="location" class="w-full border border-gray-300 rounded-lg p-2 mt-1" required>
+              <option value="USA" {% if profile.location == "USA" %}selected{% endif %}>United States</option>
+              <option value="CAN" {% if profile.location == "CAN" %}selected{% endif %}>Canada</option>
+              <option value="GBR" {% if profile.location == "GBR" %}selected{% endif %}>United Kingdom</option>
+              <option value="AUS" {% if profile.location == "AUS" %}selected{% endif %}>Australia</option>
+              <option value="IND" {% if profile.location == "IND" %}selected{% endif %}>India</option>
+              <!-- Add more countries as needed -->
+            </select>
           </label>
         </div>
         <div class="flex gap-4">

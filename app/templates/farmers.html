@@ -4,51 +4,32 @@
 {% block title %}DirectFarm | Farmers{% endblock title %}
 {% block main_content %}
 <section class="flex flex-col gap-4">
-    <div class="container mx-auto text-center py-20">
+    <div class="container mx-auto text-center">
       <h1 class="text-4xl font-bold">Meet the Farmers Behind Your Fresh Produce</h1>
       <p class="mt-4 text-lg">Learn about the people who grow the food you love. Together, we’re making a difference!</p>
     </div>
-    <section class="py-10">
+    <section class="">
         <div class="container mx-auto">
           <h2 class="text-3xl font-bold text-center mb-6">Our Farmers</h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Farmer Card -->
-            <div class="border rounded-xl shadow-lg p-4">
-              <img class="object-cover w-full h-48 rounded-t-lg" src="{% static 'images/farming.jpg' %}" alt="">
-              <div class="p-4">
-                <h3 class="text-xl font-semibold">Farmer John</h3>
-                <p class="text-gray-600">Location: Maharashtra</p>
-                <p class="text-sm mt-2">Specializes in organic fruits and vegetables. Passionate about sustainable farming.</p>
-              </div>
-            </div>
-            <div class="border rounded-xl shadow-lg p-4">
-              <img class="object-cover w-full h-48 rounded-t-lg" src="{% static 'images/farming.jpg' %}" alt="">
-              <div class="p-4">
-                <h3 class="text-xl font-semibold">Farmer John</h3>
-                <p class="text-gray-600">Location: Maharashtra</p>
-                <p class="text-sm mt-2">Specializes in organic fruits and vegetables. Passionate about sustainable farming.</p>
-              </div>
-            </div>
-            <div class="border rounded-xl shadow-lg p-4">
-              <img class="object-cover w-full h-48 rounded-t-lg" src="{% static 'images/farming.jpg' %}" alt="">
-              <div class="p-4">
-                <h3 class="text-xl font-semibold">Farmer John</h3>
-                <p class="text-gray-600">Location: Maharashtra</p>
-                <p class="text-sm mt-2">Specializes in organic fruits and vegetables. Passionate about sustainable farming.</p>
-              </div>
-            </div>
-            <div class="border rounded-xl shadow-lg p-4">
-              <img class="object-cover w-full h-48 rounded-t-lg" src="{% static 'images/farming.jpg' %}" alt="">
-              <div class="p-4">
-                <h3 class="text-xl font-semibold">Farmer John</h3>
-                <p class="text-gray-600">Location: Maharashtra</p>
-                <p class="text-sm mt-2">Specializes in organic fruits and vegetables. Passionate about sustainable farming.</p>
-              </div>
-            </div>
-            <!-- Add more cards as needed -->
+            {% for farmer in farmers %}
+              <a href="{% url 'shop_by_farmer' farmer.id %}" class="border rounded-xl shadow-lg p-4">
+                <img class="object-cover w-full h-48 rounded-t-lg" src="{{ farmer.profile_picture.url }}" alt="{{ farmer.user.username }}">
+                <div class="p-4">
+                  <h3 class="text-xl font-semibold">
+                    {% if farmer.farm_name %}
+                      {{ farmer.farm_name }}
+                    {% else %}
+                      {{ farmer }}
+                    {% endif %}
+                  </h3>
+                  <p class="text-gray-600">Location: {{ farmer.location }}</p>
+                  <p class="mt-2">{{ farmer.farm_description }}</p>
+                </div>
+              </a>
+            {% endfor %}
           </div>
         </div>
       </section>
-      
 </section>
 {% endblock main_content %}

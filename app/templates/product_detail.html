@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load static custom_tags %}
+
+{% block title %}DirectFarm | {{ product.name }}{% endblock title %}
+{% block main_content %}
+<section class="flex flex-col gap-8 p-4 bg-white rounded-xl">
+    <div class="flex flex-col md:flex-row gap-8">
+        <div class="flex-1 w-96 h-96">
+            <div class="w-full h-full flex items-center justify-center">
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="max-w-full max-h-full object-contain rounded-xl">
+            </div>
+        </div>
+        <div class="flex-1 flex flex-col gap-4">
+            <h1 class="font-bold text-3xl font-montserrat">{{ product.name }}</h1>
+            <div class="flex items-center gap-2">
+                <span class="text-sm">Category: </span>
+                <a href="{% url 'shop_by_category' product.category %}" class="text-sm font-bold">{{ product.category }}</a>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-sm">Farmer: </span>
+                <a href="{% url "shop_by_farmer" product.farmer.id %}" class="text-sm font-bold">
+                    {% if product.farmer.farm_name %}
+                        {{ product.farmer.farm_name }}
+                    {% else %}
+                        {{ product.farmer }}
+                    {% endif %}
+                </a>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="font-bold text-2xl font-montserrat text-primary">₹{{ product.offer_price }}</span>
+                <span class="line-through text-lg text-secondary">₹{{ product.price }}</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-sm">Rating: </span>
+                <div class="flex items-center">
+                    {% for number in 5|range_filter %}
+                        {% if number < product.rating %}
+                            <i class="fa-solid fa-star text-primary"></i>
+                        {% else %}
+                            <i class="fa-solid fa-star text-secondary"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <p class="text-lg">{{ product.description }}</p>
+            <div class="flex items-center justify-center gap-4 mt-4 text-center">
+                <a href="{% url 'add_to_cart' product.id %}" class="flex-1 font-bold border border-primary text-primary cursor-pointer hover:bg-light p-2 pl-3 pr-3 rounded-full transition-all duration-200">
+                    Add to cart
+                </a>
+                <button class="flex-1 font-bold border border-primary bg-primary text-white cursor-pointer hover:bg-dark p-2 pl-3 pr-3 rounded-full transition-all duration-200">
+                    Buy Now
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="mt-8">
+        <h2 class="text-3xl font-bold mb-8 text-center">Similar Products</h2>
+        {% if similar_products|length > 0 %}
+            <div class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {% for similar_product in similar_products %}
+                    <div class="flex flex-col gap-2">
+                        <a href="{% url 'product_detail' similar_product.id %}">
+                            <div class="w-full h-64 flex items-center justify-center">
+                                <img src="{{ similar_product.image.url }}" alt="{{ similar_product.name }}" class="max-w-full max-h-full object-contain rounded-xl">
+                            </div>
+                        </a>
+                        <div class="flex items-start justify-between cursor-pointer">
+                            <a href="{% url 'product_detail' similar_product.id %}" class="font-bold text-2xl">{{ similar_product.name }}</a>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="font-bold text-xl font-montserrat">₹{{ similar_product.offer_price }}</span>
+                                <span class="line-through font-montserrat">₹{{ similar_product.price }}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-start cursor-pointer">
+                            {% for number in 5|range_filter %}
+                                {% if number < similar_product.rating %}
+                                    <i class="fa-solid fa-star text-primary"></i>
+                                {% else %}
+                                    <i class="fa-solid fa-star text-secondary"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="w-full text-center">
+                <p class="text-lg">No similar products found.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock main_content %}

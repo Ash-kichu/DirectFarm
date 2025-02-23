@@ -1,82 +1,106 @@
 {% extends "base.html" %}
 {% load static custom_tags %}
 
-
 {% block title %}DirectFarm | Shop{% endblock title %}
 {% block main_content %}
 <section class="flex flex-col gap-4">
     <div class="flex items-center justify-between w-full pb-12">
         <div class="flex flex-col gap-4">
-            <h1 class="font-bold text-3xl font-montserrat">Welcome to the DirectFarm Marketplace!</h1>
+            <span class="font-bold text-3xl font-montserrat">Welcome to the DirectFarm Marketplace!</span>
             <p>Discover fresh, sustainable, and locally grown produce straight from the farm to your table.</p>
         </div>
         <img src="{% static 'images/farm-fresh.png' %}" alt="">
     </div>
-    <div class="flex items-center justify-between">
+    <form method="get" class="flex items-center justify-between" id="filter-form">
         <div class="flex gap-4">
             <div class="p-2 pr-4 text-sm pl-4 bg-light font-bold text-primary flex gap-1 items-center cursor-pointer rounded-full">
-                <span>All Categories</span>
-                <i class="fa-solid fa-chevron-down text-sm"></i>
+                <select name="category" class="bg-light border-none outline-none ring-0 focus:outline-none" onchange="document.getElementById('filter-form').submit();">
+                    <option value="">All Categories</option>
+                    <option value="Vegetables" {% if request.GET.category == "Vegetables" %}selected{% endif %}>Vegetables</option>
+                    <option value="Fruits" {% if request.GET.category == "Fruits" %}selected{% endif %}>Fruits</option>
+                    <option value="Dairy" {% if request.GET.category == "Dairy" %}selected{% endif %}>Dairy</option>
+                </select>
             </div>
             <div class="p-2 pr-4 text-sm pl-4 bg-light font-bold text-primary flex gap-1 items-center cursor-pointer rounded-full">
-                <span>Delivery Region</span>
-                <i class="fa-solid fa-chevron-down text-sm"></i>
+                <select name="delivery_region" class="bg-light border-none outline-none ring-0 focus:outline-none" onchange="document.getElementById('filter-form').submit();">
+                    <option value="">Delivery Region</option>
+                    <option value="USA" {% if request.GET.delivery_region == "USA" %}selected{% endif %}>United States</option>
+                    <option value="CAN" {% if request.GET.delivery_region == "CAN" %}selected{% endif %}>Canada</option>
+                    <option value="GBR" {% if request.GET.delivery_region == "GBR" %}selected{% endif %}>United Kingdom</option>
+                    <option value="AUS" {% if request.GET.delivery_region == "AUS" %}selected{% endif %}>Australia</option>
+                    <option value="IND" {% if request.GET.delivery_region == "IND" %}selected{% endif %}>India</option>
+                </select>
             </div>
             <div class="p-2 pr-4 text-sm pl-4 bg-light font-bold text-primary flex gap-1 items-center cursor-pointer rounded-full">
-                <span>Price Range</span>
-                <i class="fa-solid fa-chevron-down text-sm"></i>
+                <input type="number" name="min_price" placeholder="Min Price" class="bg-light border-none outline-none ring-0 focus:outline-none" value="{{ request.GET.min_price }}" onchange="document.getElementById('filter-form').submit();">
+                <input type="number" name="max_price" placeholder="Max Price" class="bg-light border-none outline-none ring-0 focus:outline-none" value="{{ request.GET.max_price }}" onchange="document.getElementById('filter-form').submit();">
             </div>
             <div class="p-2 pr-4 text-sm pl-4 bg-light font-bold text-primary flex gap-1 items-center cursor-pointer rounded-full">
-                <span>Ratings</span>
-                <i class="fa-solid fa-chevron-down text-sm"></i>
+                <select name="rating" class="bg-light border-none outline-none ring-0 focus:outline-none" onchange="document.getElementById('filter-form').submit();">
+                    <option value="">Ratings</option>
+                    <option value="1" {% if request.GET.rating == "1" %}selected{% endif %}>1 Star & Up</option>
+                    <option value="2" {% if request.GET.rating == "2" %}selected{% endif %}>2 Stars & Up</option>
+                    <option value="3" {% if request.GET.rating == "3" %}selected{% endif %}>3 Stars & Up</option>
+                    <option value="4" {% if request.GET.rating == "4" %}selected{% endif %}>4 Stars & Up</option>
+                    <option value="5" {% if request.GET.rating == "5" %}selected{% endif %}>5 Stars</option>
+                </select>
             </div>
             <div class="p-2 pr-4 text-sm pl-4 bg-light font-bold text-primary flex gap-1 items-center cursor-pointer rounded-full">
-                <span>All Filters</span>
-                <i class="fa-solid fa-sliders"></i>
+                <a href="{% url 'shop' %}" class="bg-light border-none outline-none ring-0 focus:outline-none">Clear Filters</a>
             </div>
         </div>
         <div class="flex gap-2 items-center justify-center">
             <div class="p-4 font-semibold font-montserrat flex gap-1 items-center">
-                <span>99 Items available</span>
+                <span>{{ products|length }} Items available</span>
             </div>
             <div class="p-2 pr-4 text-sm pl-4 border border-secondary font-bold text-primary flex gap-1 items-center cursor-pointer rounded-full">
-                <span>Sort By <strong>Latest</strong></span>
-                <i class="fa-solid fa-chevron-down text-sm"></i>
+                <select name="sort_by" class="border-none outline-none ring-0 focus:outline-none" onchange="document.getElementById('filter-form').submit();">
+                    <option value="latest" {% if request.GET.sort_by == "latest" %}selected{% endif %}>Sort By Latest</option>
+                    <option value="price" {% if request.GET.sort_by == "price" %}selected{% endif %}>Sort By Price</option>
+                    <option value="rating" {% if request.GET.sort_by == "rating" %}selected{% endif %}>Sort By Rating</option>
+                </select>
             </div>
         </div>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 bg-white p-4 rounded-xl">
+    </form>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 bg-white p-4 rounded-xl">
         {% for product in products %}
             <div class="flex flex-col gap-2">
-                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-auto inset-0 h-64 rounded-xl object-contain">
-                <div class="flex items-center justify-between cursor-pointer">
-                    <h1 class="font-bold text-xl hover:underline">{{product.name}}</h1>
-                    <h1 class="line-through font-bold text-xl font-montserrat">₹{{product.price}}</h1>
-                    <h1 class="font-bold text-xl font-montserrat">₹{{ product.final_price}}</h1>
+                <a href="{% url 'product_detail' product.id %}">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-auto inset-0 h-64 rounded-xl object-contain">
+                </a>
+                <div class="flex items-start justify-between cursor-pointer">
+                    <a href="{% url 'product_detail' product.id %}" class="font-bold text-2xl">{{product.name}}</a>
+                    <div class="flex flex-col items-center gap-1">
+                        <span class="font-bold text-xl font-montserrat">₹{{ product.offer_price}}</span>
+                        <span class="line-through font-montserrat">₹{{product.price}}</span>
+                    </div>
                 </div>
-                 <div class="flex items-center">
-                    <span class="text-sm cursor-pointer hover:underline">{{product.category}}</span>
+                <div class="flex items-center">
+                    <span class="text-sm cursor-pointer">Category: <a href="{% url 'shop_by_category' product.category %}">{{product.category}}</a></span>
                 </div>
                 <div class="flex items-center">
                     <span class="text-sm cursor-pointer">Farmer: &nbsp;</span>
-                    <span class="text-sm cursor-pointer hover:underline">{{product.farmer}}</span>
+                    <a href="{% url "shop_by_farmer" product.farmer.id %}" class="text-sm cursor-pointer">
+                        {% if product.farmer.farm_name %}
+                            {{ product.farmer.farm_name }}
+                        {% else %}
+                            {{ product.farmer }}
+                        {% endif %}
+                    </a>
                 </div>
-               
-                
                 <div class="flex items-center justify-start cursor-pointer">
                     {% for number in 5|range_filter %}
                         {% if number < product.rating %}
-                            <i class="fa-solid fa-star text-orange-400"></i>
+                            <i class="fa-solid fa-star text-primary"></i>
                         {% else %}
-                            <i class="fa-solid fa-star text-green"></i>
+                            <i class="fa-solid fa-star text-secondary"></i>
                         {% endif %}
                     {% endfor %}
-                    {% comment %} <span class="font-montserrat ml-2">(99)</span> {% endcomment %}
                 </div>
-                <div class="flex items-center justify-center gap-2">
-                    <button class="flex-1 font-bold border border-primary text-primary cursor-pointer hover:bg-light p-2 pl-3 pr-3 rounded-full transition-all duration-200">
+                <div class="flex items-center justify-center text-center gap-2">
+                    <a href="{% url 'add_to_cart' product.id %}" class="flex-1 font-bold border border-primary text-primary cursor-pointer hover:bg-light p-2 pl-3 pr-3 rounded-full transition-all duration-200">
                         Add to cart
-                    </button>
+                    </a>
                     <button class="flex-1 font-bold border border-primary bg-primary text-white cursor-pointer hover:bg-dark p-2 pl-3 pr-3 rounded-full transition-all duration-200">
                         Buy Now
                     </button>
@@ -84,6 +108,5 @@
             </div>
         {% endfor %}
     </div>
-    
 </section>
 {% endblock main_content %}

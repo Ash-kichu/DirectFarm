@@ -44,12 +44,12 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                primary: '#16423C',
-                secondary: '#89CFB5',
-                green: '#3BA547',
-                brown: '#9E4622',
-                dark: '#00201c',
-                light: '#afebd5',
+                primary: 'var(--primary)',
+                secondary: 'var(--secondary)',
+                green: 'var(--green)',
+                brown: 'var(--brown)',
+                dark: 'var(--dark)',
+                light: 'var(--light)',
             },
             fontFamily: {
                 'montserrat' : ['Montserrat', 'serif'],
@@ -57,7 +57,7 @@ module.exports = {
             },
             boxShadow: {
                 'top': '0 10px 20px black',
-                'bottom': '0 1px 8px #16423C',
+                'bottom': '0 1px 8px var(--primary)',
             },
             animation: {
                 'dropDown': 'dropDown 1s',

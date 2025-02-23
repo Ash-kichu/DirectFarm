@@ -1,0 +1,49 @@
+{% extends "account.html" %}
+
+{% block account_section %}
+<div id="products" class="py-6">
+  <div class="container mx-auto w-full">
+    <h2 class="text-2xl font-bold mb-4">My Products</h2>
+    <div class="mb-4 w-full flex items-center justify-end">
+      <a href="{% url 'add_product' %}" class="py-2 px-4 rounded-lg font-semibold bg-primary text-white hover:bg-dark">Add New Product</a>
+    </div>
+    <div class="overflow-x-auto text-center">
+      <table class="w-full border-collapse border border-gray-300">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border p-2">Image</th>
+            <th class="border p-2">Name</th>
+            <th class="border p-2">Category</th>
+            <th class="border p-2">Price</th>
+            <th class="border p-2">Offer Price</th>
+            <th class="border p-2">Stock</th>
+            <th class="border p-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product in products %}
+          <tr>
+            <td class="border p-2 flex items-center justify-center">
+              <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-16 h-16 rounded-xl object-contain">
+            </td>
+            <td class="border p-2">{{ product.name }}</td>
+            <td class="border p-2">{{ product.category }}</td>
+            <td class="border p-2">₹{{ product.price }}</td>
+            <td class="border p-2">₹{{ product.offer_price }}</td>
+            <td class="border p-2">{{ product.stock_quantity }}</td>
+            <td class="border p-2">
+              <a href="{% url 'edit_product' product.id %}" class="text-blue-600 hover:underline">Edit</a>
+              <a href="{% url 'delete_product' product.id %}" class="text-red-600 hover:underline">Delete</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="8" class="border p-2 text-center">No products found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock account_section %}

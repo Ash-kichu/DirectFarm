@@ -2,15 +2,15 @@ from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-from django.db.models import F
 from .models import Profile
 from django.contrib.auth.models import User
 from django.contrib import messages
 from datetime import datetime
+from django.core.exceptions import ValidationError
 
-from .models import Product
+from .models import Product, Cart, CartItem, Order, OrderItem
 
-# Create your views here.
+# Home page view
 def home_view(request):
     reviews = [
         {
@@ -27,23 +27,72 @@ def home_view(request):
 
     return render(request, 'home.html', context)
 
+# Shop page view
 def shop_view(request):
-    products =Product.objects.annotate(final_price=F('price') - F('offer_price')).order_by('category')
-    
+    products = Product.objects.all().order_by('created_at')
+
+    category = request.GET.get('category')
+    if category:
+        products = products.filter(category=category)
+
+    delivery_region = request.GET.get('delivery_region')
+    if delivery_region:
+        products = products.filter(farmer__location=delivery_region)
+
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    if min_price and max_price:
+        products = products.filter(price__gte=min_price, price__lte=max_price)
+
+    rating = request.GET.get('rating')
+    if rating:
+        products = products.filter(rating__gte=rating)
+
+    sort_by = request.GET.get('sort_by')
+    if sort_by == 'price':
+        products = products.order_by('price')
+    elif sort_by == 'rating':
+        products = products.order_by('-rating')
+    else:
+        products = products.order_by('-created_at')
+
+    similar_products = Product.objects.filter(category=category).exclude(id__in=products.values_list('id', flat=True))[:4]
+
     context = {
-        'products' : products,
+        'products': products,
+        'similar_products': similar_products
     }
     return render(request, 'shop.html', context)
 
+def shop_view_by_farmer(request, farmer_id):
+    products = Product.objects.filter(farmer_id=farmer_id).order_by('created_at')
+    context = {
+        'products': products,
+    }
+    return render(request, 'shop.html', context)
+
+def shop_view_by_category(request, category):
+    products = Product.objects.filter(category=category).order_by('created_at')
+    context = {
+        'products': products,
+    }
+    return render(request, 'shop.html', context)
+
+# About page view
 def about_view(request):
     return render(request, 'about.html')
 
+# Farmers page view
 def farmers_view(request):
-    return render(request, 'farmers.html')
+    farmers = Profile.objects.filter(user_type='Farmer')
+    context = {'farmers': farmers}
+    return render(request, 'farmers.html', context)
 
+# Contact page view
 def contact_view(request):
     return render(request, 'contact.html')
 
+# Account page view
 @login_required(login_url='/login/?next=/account/')
 def account_view(request):
     profile = Profile.objects.get(user=request.user)
@@ -51,6 +100,7 @@ def account_view(request):
     context = {'profile': profile}
     return render(request, 'profile.html', context)
 
+# Update profile view
 @login_required(login_url='/login/?next=/account/')
 def update_profile_view(request):
     if request.method == 'POST':
@@ -84,16 +134,140 @@ def update_profile_view(request):
 
     return render(request, 'profile.html', {'profile': profile})
 
+# Orders page view
+@login_required(login_url='/login/?next=/account/')
 def orders_view(request):
-    return render(request, 'orders.html')
+    orders = Order.objects.filter(user=request.user.profile)
+    context = {'orders': orders}
+    return render(request, 'orders.html', context)
 
-@login_required(login_url='login')
-def preferences_view(request):
-    return render(request, 'preferences.html')
+# Products page view
+@login_required(login_url='/login/?next=/account/')
+def products_view(request):
+    if request.user.profile.user_type != 'Farmer':
+        messages.error(request, 'You do not have permission to view this page.')
+        return redirect('account')
+    
+    products = Product.objects.filter(farmer=request.user.profile)
+    context = {'products': products}
+    return render(request, 'products.html', context)
 
+def add_product(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        category = request.POST.get('category')
+        price = request.POST.get('price')
+        stock_quantity = request.POST.get('stock_quantity')
+        description = request.POST.get('description')
+        image = request.FILES.get('image')
+        offer_price = request.POST.get('offer_price') or price
+        offer_percentage = request.POST.get('offer_percentage') or 0
+
+        if not all([name, category, price, stock_quantity, description, image]):
+            messages.error(request, 'All fields are required.')
+            return render(request, 'add_product.html')
+
+        try:
+            price = float(price)
+            stock_quantity = int(stock_quantity)
+            offer_percentage = int(offer_percentage) if offer_percentage else None
+        except ValueError:
+            messages.error(request, 'Invalid price, stock quantity, offer price, or offer percentage.')
+            return render(request, 'add_product.html')
+
+        product = Product(
+            name=name,
+            category=category,
+            price=price,
+            stock_quantity=stock_quantity,
+            description=description,
+            image=image,
+            offer_price=offer_price,
+            offer_percentage=offer_percentage,
+            farmer=request.user.profile
+        )
+
+        try:
+            product.full_clean()
+            product.save()
+            messages.success(request, 'Product added successfully.')
+            return redirect('products')
+        except ValidationError as e:
+            messages.error(request, e.message_dict)
+            return render(request, 'add_product.html')
+
+    return render(request, 'add_product.html')
+
+@login_required(login_url='/login/?next=/account/')
+def edit_product(request, product_id):
+    product = Product.objects.get(id=product_id, farmer=request.user.profile)
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        category = request.POST.get('category')
+        price = request.POST.get('price')
+        stock_quantity = request.POST.get('stock_quantity')
+        description = request.POST.get('description')
+        image = request.FILES.get('image')
+        offer_price = request.POST.get('offer_price') or price
+        offer_percentage = request.POST.get('offer_percentage') or 0
+
+        if not all([name, category, price, stock_quantity, description]):
+            messages.error(request, 'All fields except image are required.')
+            return render(request, 'edit_product.html', {'product': product})
+
+        try:
+            price = float(price)
+            stock_quantity = int(stock_quantity)
+            offer_percentage = int(offer_percentage) if offer_percentage else None
+        except ValueError:
+            messages.error(request, 'Invalid price, stock quantity, offer price, or offer percentage.')
+            return render(request, 'edit_product.html', {'product': product})
+
+        product.name = name
+        product.category = category
+        product.price = price
+        product.stock_quantity = stock_quantity
+        product.description = description
+        product.offer_price = offer_price
+        product.offer_percentage = offer_percentage
+        if image:
+            product.image = image
+
+        try:
+            product.full_clean()
+            product.save()
+            messages.success(request, 'Product updated successfully.')
+            return redirect('products')
+        except ValidationError as e:
+            messages.error(request, e.message_dict)
+            return render(request, 'edit_product.html', {'product': product})
+
+    return render(request, 'edit_product.html', {'product': product})
+
+@login_required(login_url='/login/?next=/account/')
+def delete_product(request, product_id):
+    product = Product.objects.get(id=product_id, farmer=request.user.profile)
+    if request.method == 'POST':
+        product.delete()
+        messages.success(request, 'Product deleted successfully.')
+        return redirect('products')
+    return render(request, 'confirm_delete_product.html', {'product': product})
+
+# Single product page view
+def product_detail_view(request, product_id):
+    product = Product.objects.get(id=product_id)
+    similar_products = Product.objects.filter(category=product.category).exclude(id=product_id)[:4]
+    context = {
+        'product': product,
+        'similar_products': similar_products
+    }
+    return render(request, 'product_detail.html', context)
+
+# Confirm logout view
 def confirm_logout_view(request):
     return render(request, 'logout.html')
 
+# Logout view
 def logout_view(request):
     if request.method == 'POST':
         print('Logging out')
@@ -101,9 +275,33 @@ def logout_view(request):
         messages.success(request, 'Logged out successfully!')
     return render(request, 'home.html', {'messages': messages.get_messages(request)})
 
+# Cart view
+@login_required(login_url='/login/?next=/cart/')
 def cart_view(request):
-    return render(request, 'cart.html')
+    cart, created = Cart.objects.get_or_create(user=request.user.profile)
+    cart_items = CartItem.objects.filter(cart=cart)
+    context = {'cart_items': cart_items}
+    return render(request, 'account/cart.html', context)
 
+@login_required(login_url='/login/?next=/cart/')
+def add_to_cart_view(request, product_id):
+    product = Product.objects.get(id=product_id)
+    cart, created = Cart.objects.get_or_create(user=request.user.profile)
+    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
+    messages.success(request, f'{product.name} added to cart.')
+    return redirect(request.META.get('HTTP_REFERER', 'shop'))
+
+@login_required(login_url='/login/?next=/cart/')
+def remove_from_cart_view(request, cart_item_id):
+    cart_item = CartItem.objects.get(id=cart_item_id, cart__user=request.user.profile)
+    cart_item.delete()
+    messages.success(request, f'{cart_item.product.name} removed from cart.')
+    return redirect('cart')
+
+# Checkout view
 def signup_view(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -163,6 +361,7 @@ def signup_view(request):
 
     return render(request, 'signup.html', {'messages': messages.get_messages(request)})
 
+# Login view
 def login_view(request):
     next_url = request.GET.get('next', '/')
     if request.method == 'POST':
@@ -177,5 +376,21 @@ def login_view(request):
             messages.error(request, 'Invalid username or password')
     return render(request, 'login.html', {'next': next_url, 'messages': messages.get_messages(request)})
 
+# Forgot password view
+def forgot_password_view(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        try:
+            user = User.objects.get(email=email)
+            # Logic to send password reset email goes here
+            messages.success(request, 'Password reset email sent successfully.')
+        except User.DoesNotExist:
+            messages.error(request, 'No account found with that email address.')
+    return render(request, 'forgot-password.html', {'messages': messages.get_messages(request)})
+
+# How it works view
 def how_it_works_view(request):
     return render(request, 'how-it-works.html')
+
+def custom_404(request, exception):
+    return render(request, '404.html', status=404)
