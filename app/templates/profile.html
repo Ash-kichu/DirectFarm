@@ -1,28 +1,94 @@
 {% extends "account.html" %}
+{% load static %}
 
 {% block account_section %}
-<div id="profile" class="py-6">
+<div id="profile" class="py-2">
     <div class="container mx-auto max-w-4xl">
-      <h2 class="text-2xl font-bold mb-4">Your Profile</h2>
-      <form action="/update-profile/" method="POST" class="space-y-4">
+      <form action="{% url 'update_profile' %}" method="POST" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+        <div class="text-center mb-4">
+          <label for="profile_picture" class="cursor-pointer">
+            {% if profile.profile_picture %}
+            <img id="profileImage" src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="w-32 h-32 rounded-full mx-auto border">
+            {% else %}
+            <img id="profileImage" src="{% static 'images/user.png' %}" alt="Profile Picture" class="w-32 h-32 rounded-full mx-auto border">
+            {% endif %}
+            <input type="file" id="profile_picture" name="profile_picture" class="hidden" onchange="previewImage(event)">
+            <h2 class="text-2xl font-bold text-center">{{user}}</h2>
+          </label>
+        </div>
         <div class="flex gap-4">
           <label class="flex-1">
-            <span class="block text-gray-700">Name</span>
-            <input type="text" name="name" value="John Doe" class="w-full border rounded-lg p-2" required>
+            <span class="block text-gray-700">First Name</span>
+            <input type="text" name="first_name" value="{{ user.first_name }}" class="w-full border rounded-lg p-2" required>
           </label>
           <label class="flex-1">
+            <span class="block text-gray-700">Last Name</span>
+            <input type="text" name="last_name" value="{{ user.last_name }}" class="w-full border rounded-lg p-2" required>
+          </label>
+        </div>
+        <div class="flex gap-4">
+          <label class="flex-1">
             <span class="block text-gray-700">Email</span>
-            <input type="email" name="email" value="john.doe@example.com" class="w-full border rounded-lg p-2" required>
+            <input type="email" name="email" value="{{ user.email }}" class="w-full border rounded-lg p-2" required>
+          </label>
+          <label class="flex-1">
+            <span class="block text-gray-700">Phone</span>
+            <input type="text" name="phone" value="{{ profile.phone }}" class="w-full border rounded-lg p-2" required>
           </label>
         </div>
-        <div>
-          <label>
+        <div class="flex gap-4">
+          <label class="flex-1">
             <span class="block text-gray-700">Address</span>
-            <textarea name="address" class="w-full border rounded-lg p-2" rows="3">123 Main St, Springfield</textarea>
+            <textarea name="address" class="w-full border rounded-lg p-2" rows="3" required>{{ profile.address }}</textarea>
+          </label>
+          <label class="flex-1">
+            <span class="block text-gray-700">Location</span>
+            <input type="text" name="location" value="{{ profile.location }}" class="w-full border rounded-lg p-2" required>
           </label>
         </div>
-        <button type="submit" class="bg-light font-bold py-2 px-4 rounded-lg hover:bg-primary hover:text-white">Save Changes</button>
+        <div class="flex gap-4">
+          <label class="flex-1">
+            <span class="block text-gray-700">Date of Birth</span>
+            <input type="date" name="dob" value="{{ profile.dob }}" class="w-full border rounded-lg p-2" required>
+          </label>
+        </div>
+        <div class="flex gap-4">
+          <label class="flex-1">
+            <span class="block text-gray-700">User Type</span>
+            <select name="user_type" class="w-full border rounded-lg p-2" required>
+              <option value="Customer" {% if profile.user_type == 'Customer' %}selected{% endif %}>Customer</option>
+              <option value="Farmer" {% if profile.user_type == 'Farmer' %}selected{% endif %}>Farmer</option>
+            </select>
+          </label>
+        </div>
+        {% if profile.user_type == 'Farmer' %}
+        <div class="flex gap-4">
+          <label class="flex-1">
+            <span class="block text-gray-700">Farm Name</span>
+            <input type="text" name="farm_name" value="{{ profile.farm_name }}" class="w-full border rounded-lg p-2">
+          </label>
+          <label class="flex-1">
+            <span class="block text-gray-700">Farm Description</span>
+            <textarea name="farm_description" class="w-full border rounded-lg p-2">{{ profile.farm_description }}</textarea>
+          </label>
+        </div>
+        {% endif %}
+        <div>
+          <button type="submit" class="bg-light font-bold py-2 px-4 rounded-lg hover:bg-primary hover:text-white">Save Changes</button>
+        </div>
       </form>
     </div>
 </div>
+
+<script>
+  function previewImage(event) {
+    var reader = new FileReader();
+    reader.onload = function() {
+      var output = document.getElementById('profileImage');
+      output.src = reader.result;
+    }
+    reader.readAsDataURL(event.target.files[0]);
+  }
+</script>
 {% endblock account_section %}

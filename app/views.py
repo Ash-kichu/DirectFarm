@@ -46,7 +46,43 @@ def contact_view(request):
 
 @login_required(login_url='/login/?next=/account/')
 def account_view(request):
-    return render(request, 'profile.html')
+    profile = Profile.objects.get(user=request.user)
+    profile.dob = profile.dob.strftime('%Y-%m-%d') if profile.dob else ''
+    context = {'profile': profile}
+    return render(request, 'profile.html', context)
+
+@login_required(login_url='/login/?next=/account/')
+def update_profile_view(request):
+    if request.method == 'POST':
+        user = request.user
+        profile = Profile.objects.get(user=user)
+
+        user.first_name = request.POST['first_name']
+        user.last_name = request.POST['last_name']
+        user.email = request.POST['email']
+        profile.phone = request.POST['phone']
+        profile.address = request.POST['address']
+        profile.location = request.POST['location']
+        profile.dob = request.POST['dob']
+        profile.user_type = request.POST['user_type']
+
+        if profile.user_type == 'Farmer':
+            profile.farm_name = request.POST.get('farm_name', '')
+            profile.farm_description = request.POST.get('farm_description', '')
+        else:
+            profile.farm_name = ''
+            profile.farm_description = ''
+
+        if 'profile_picture' in request.FILES:
+            profile.profile_picture = request.FILES['profile_picture']
+
+        user.save()
+        profile.save()
+
+        messages.success(request, 'Profile updated successfully')
+        return redirect('account')
+
+    return render(request, 'profile.html', {'profile': profile})
 
 def orders_view(request):
     return render(request, 'orders.html')
@@ -62,7 +98,8 @@ def logout_view(request):
     if request.method == 'POST':
         print('Logging out')
         logout(request)
-    return redirect(request.GET.get('next', '/'))
+        messages.success(request, 'Logged out successfully!')
+    return render(request, 'home.html', {'messages': messages.get_messages(request)})
 
 def cart_view(request):
     return render(request, 'cart.html')

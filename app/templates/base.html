@@ -22,9 +22,9 @@
     
     <!-- Messages Section -->
     {% if messages %}
-        <div class="fixed bottom-0 right-0 flex items-center justify-center ml-12 z-50 p-12 animate-slideInLeft" id="messages">
+        <div class="fixed top-10 right-0 flex flex-col gap-2 items-center justify-center ml-12 z-50 p-12 animate-slideInLeft" id="messages">
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} p-4 mb-4 rounded-lg shadow-md">
+                <div class="alert alert-{{ message.tags }} p-4 mb-4 rounded-lg shadow-xl shadow-black">
                     {{ message }}
                 </div>
             {% endfor %}
