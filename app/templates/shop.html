@@ -48,7 +48,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 bg-white p-4 rounded-xl">
         {% for product in products %}
             <div class="flex flex-col gap-2">
-                <img src="{% static product.image %}" alt="" class="w-auto inset-0 h-64 rounded-xl bg-light object-cover">
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-auto inset-0 h-64 rounded-xl object-contain">
                 <div class="flex items-center justify-between cursor-pointer">
                     <h1 class="font-bold text-xl hover:underline">{{product.name}}</h1>
                     <h1 class="line-through font-bold text-xl font-montserrat">₹{{product.price}}</h1>
