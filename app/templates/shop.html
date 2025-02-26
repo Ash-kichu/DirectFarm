@@ -20,7 +20,7 @@
                 </div>
                 <div class="flex flex-col gap-4">
                     <div class="p-2 px-3 bg-secondary text-primary flex gap-1 items-center cursor-pointer rounded-xl">
-                        <select name="category" class="w-full bg-secondary border-none outline-none ring-0 focus:outline-none" onchange="document.getElementById('filter-form').submit();">
+                        <select name="category" class="w-full bg-secondary border-none outline-none ring-0 focus:outline-none" onchange="if(this.value) document.getElementById('filter-form').submit();">
                             <option value="">All Categories</option>
                             {% for category in categories %}
                                 <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
@@ -35,7 +35,7 @@
                         </select>
                     </div>
                     <div class="p-2 px-3 bg-secondary text-primary flex gap-1 items-center cursor-pointer rounded-xl">
-                        <select name="delivery_region" class="w-full bg-secondary border-none outline-none ring-0 focus:outline-none" onchange="document.getElementById('filter-form').submit();">
+                        <select name="delivery_region" class="w-full bg-secondary border-none outline-none ring-0 focus:outline-none" onchange="if(this.value) document.getElementById('filter-form').submit();">
                             <option value="">Delivery Region</option>
                             <option value="USA" {% if request.GET.delivery_region == "USA" %}selected{% endif %}>United States</option>
                             <option value="CAN" {% if request.GET.delivery_region == "CAN" %}selected{% endif %}>Canada</option>
@@ -47,12 +47,12 @@
                     <div class="p-2 px-3 bg-secondary text-primary flex flex-col gap-1 items-start rounded-xl">
                         <span class="">Price range</span>
                         <div class="flex items-center justify-center gap-2">
-                            <input type="number" name="min_price" placeholder="Min" class="w-1/2 bg-light rounded-xl border-none outline-none ring-0 focus:outline-none" value="{{ request.GET.min_price }}" onchange="document.getElementById('filter-form').submit();">
-                            <input type="number" name="max_price" placeholder="Max" class="w-1/2 bg-light rounded-xl border-none outline-none ring-0 focus:outline-none" value="{{ request.GET.max_price }}" onchange="document.getElementById('filter-form').submit();">
+                            <input type="number" name="min_price" placeholder="Min" class="w-1/2 bg-light rounded-xl border-none outline-none ring-0 focus:outline-none" value="{{ request.GET.min_price }}" onchange="if(this.value) document.getElementById('filter-form').submit();">
+                            <input type="number" name="max_price" placeholder="Max" class="w-1/2 bg-light rounded-xl border-none outline-none ring-0 focus:outline-none" value="{{ request.GET.max_price }}" onchange="if(this.value) document.getElementById('filter-form').submit();">
                         </div>
                     </div>
                     <div class="p-2 px-3 bg-secondary text-primary flex gap-1 items-center cursor-pointer rounded-xl">
-                        <select name="rating" class="w-full bg-secondary border-none outline-none ring-0 focus:outline-none" onchange="document.getElementById('filter-form').submit();">
+                        <select name="rating" class="w-full bg-secondary border-none outline-none ring-0 focus:outline-none" onchange="if(this.value) document.getElementById('filter-form').submit();">
                             <option value="">Ratings</option>
                             <option value="1" {% if request.GET.rating == "1" %}selected{% endif %}>1 Star & Up</option>
                             <option value="2" {% if request.GET.rating == "2" %}selected{% endif %}>2 Stars & Up</option>
@@ -62,7 +62,7 @@
                         </select>
                     </div>
                     <div class="p-2 px-3 bg-secondary text-primary flex gap-1 items-center cursor-pointer rounded-xl">
-                        <select name="farmer" class="w-full bg-secondary border-none outline-none ring-0 focus:outline-none" onchange="document.getElementById('filter-form').submit();">
+                        <select name="farmer" class="w-full bg-secondary border-none outline-none ring-0 focus:outline-none" onchange="if(this.value) document.getElementById('filter-form').submit();">
                             <option value="">All Farmers</option>
                             {% for farmer in farmers %}
                                 <option value="{{ farmer.id }}" {% if request.GET.farmer == farmer.id|stringformat:"s" %}selected{% endif %}>

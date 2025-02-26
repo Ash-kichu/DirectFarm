@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}DirectFarm | Records{% endblock title %}
+{% block main_content %}
+<section class="flex flex-col items-center gap-4 pl-32 pr-32">
+    <h1 class="font-bold text-3xl">Records</h1>
+    <p>View all records</p>
+    <table class="min-w-full bg-white text-center rounded-xl shadow-sm border border-gray-200">
+        <thead class="bg-primary text-white">
+            <tr>
+                <th class="py-2">Product</th>
+                <th class="py-2">Farmer</th>
+                <th class="py-2">Price</th>
+                <th class="py-2">Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+                <tr class="border-t">
+                    <td class="py-4">{{ record.product.name }}</td>
+                    <td class="py-4">{{ record.farmer.user.username }}</td>
+                    <td class="py-4">₹{{ record.price }}</td>
+                    <td class="py-4">{{ record.date }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="w-full">
+        <span class="w-full flex items-center justify-between">
+            <span class="">
+                Page {{ records.number }} of {{ records.paginator.num_pages }}.
+            </span>
+
+            <div class="flex items-center gap-2">
+                {% if records.has_previous %}
+                    <a href="?page=1">&laquo; 1</a>
+                    <a href="?page={{ records.previous_page_number }}">previous</a>
+                {% endif %}
+    
+    
+                {% if records.has_next %}
+                    <a href="?page={{ records.next_page_number }}">next</a>
+                    <a href="?page={{ records.paginator.num_pages }}">{{records.paginator.num_pages}} &raquo;</a>
+                {% endif %}
+            </div>
+        </span>
+    </div>
+</section>
+<form class="w-full flex flex-col items-start px-32 gap-4">
+    <label for="productFilter" class="font-bold">Filter by Product:</label>
+    <select id="productFilter" class="w-1/3 border rounded p-2">
+        <option value="">All Products</option>
+        {% for product in products %}
+            <option value="{{ product.id }}">{{ product.name }}</option>
+        {% endfor %}
+    </select>
+    <canvas id="recordsChart" width="400" height="200"></canvas>
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('recordsChart').getContext('2d');
+        const productFilter = document.getElementById('productFilter');
+        let chart;
+
+        function updateChart(records) {
+            const labels = records.map(record => new Date(record.date));
+            const data = records.map(record => record.price);
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Price',
+                        data: data,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        productFilter.addEventListener('change', function () {
+            const selectedProductId = this.value;
+            fetch(`/get_filtered_records/?product_id=${selectedProductId}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateChart(data);
+                });
+        });
+
+        // Initialize chart with all records
+        fetch('/get_filtered_records/')
+            .then(response => response.json())
+            .then(data => {
+                updateChart(data);
+            });
+    });
+</script>
+{% endblock main_content %}

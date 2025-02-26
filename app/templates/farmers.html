@@ -14,7 +14,11 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for farmer in farmers %}
               <a href="{% url 'shop_by_farmer' farmer.id %}" class="border rounded-xl shadow-lg p-4">
-                <img class="object-cover w-full h-48 rounded-t-lg" src="{{ farmer.profile_picture.url }}" alt="{{ farmer.user.username }}">
+                {% if farmer.profile_picture %}
+                  <img class="object-cover w-full h-48 rounded-t-lg" src="{{ farmer.profile_picture.url }}" alt="{{ farmer.user.username }}">
+                {% else %}
+                  <img class="object-cover w-full h-48 rounded-t-lg" src="{% static 'images/default_profile_picture.png' %}" alt="Default Profile Picture">
+                {% endif %}
                 <div class="p-4">
                   <h3 class="text-xl font-semibold">
                     {% if farmer.farm_name %}

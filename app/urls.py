@@ -36,6 +36,8 @@ urlpatterns = [
     path('account/customer_orders/', views.customer_orders_view, name='customer_orders'),
     path('account/categories/', views.categories_view, name='categories'),
     path('account/categories/add/', views.add_category_view, name='add_category'),
+    path('records/', views.records_view, name='records'),
+    path('get_filtered_records/', views.get_filtered_records, name='get_filtered_records'),
 ]
 
 handler404 = 'app.views.custom_404'

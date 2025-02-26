@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from decimal import Decimal
+from datetime import date
 
 class Profile(models.Model):
     USER_TYPE_CHOICES = [
@@ -37,6 +38,12 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
+    def save(self, *args, **kwargs):
+        if not self.pk:  # New profile
+            super().save(*args, **kwargs)
+        else:
+            super().save(*args, **kwargs)
+
 class Category(models.Model):
     name = models.CharField(max_length=100)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='subcategories', blank=True, null=True)
@@ -67,6 +74,7 @@ class Product(models.Model):
         if self.farmer.user_type != 'Farmer':
             raise ValueError("Only users of type 'Farmer' can create products.")
         super().save(*args, **kwargs)
+        Record.objects.create(farmer=self.farmer, product=self, price=self.offer_price)
 
     def update_rating(self):
         reviews = self.reviews.all()
@@ -125,6 +133,12 @@ class Order(models.Model):
     def __str__(self):
         return f"Order {self.id} by {self.user.user.username}"
 
+    def save(self, *args, **kwargs):
+        if not self.pk:  # New order
+            super().save(*args, **kwargs)
+        else:
+            super().save(*args, **kwargs)
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -144,4 +158,13 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Review of {self.product.name} by {self.user.username}"
+
+class Record(models.Model):
+    farmer = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='records')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='records')
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateField(default=date.today, editable=True)
+
+    def __str__(self):
+        return f"Record of {self.product.name} by {self.farmer.user.username}"
 

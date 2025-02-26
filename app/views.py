@@ -8,8 +8,12 @@ from django.contrib import messages
 from datetime import datetime
 from django.core.exceptions import ValidationError
 from django.views.decorators.http import require_POST
+from django.core.paginator import Paginator
+from django.core.serializers.json import DjangoJSONEncoder
+import json
+from django.http import JsonResponse
 
-from .models import Product, Cart, CartItem, Order, OrderItem, Review, Category
+from .models import Product, Cart, CartItem, Order, OrderItem, Review, Category, Record
 
 # Home page view
 def home_view(request):
@@ -30,49 +34,50 @@ def home_view(request):
 
 # Shop page view
 def shop_view(request):
-    products = Product.objects.all().order_by('created_at')
-    categories = Category.objects.filter(parent__isnull=True)
+    try:
+        products = Product.objects.all().order_by('created_at')
+        categories = Category.objects.filter(parent__isnull=True)
 
-    category_id = request.GET.get('category')
-    if category_id:
-        products = products.filter(category_id=category_id)
+        category_id = request.GET.get('category')
+        if category_id:
+            products = products.filter(category_id=category_id)
 
-    delivery_region = request.GET.get('delivery_region')
-    if delivery_region:
-        products = products.filter(farmer__location=delivery_region)
+        delivery_region = request.GET.get('delivery_region')
+        if delivery_region:
+            products = products.filter(farmer__location=delivery_region)
 
-    min_price = request.GET.get('min_price')
-    max_price = request.GET.get('max_price')
-    if min_price and max_price:
-        products = products.filter(price__gte=min_price, price__lte=max_price)
+        min_price = request.GET.get('min_price')
+        max_price = request.GET.get('max_price')
+        if min_price and max_price:
+            products = products.filter(price__gte=min_price, price__lte=max_price)
 
-    rating = request.GET.get('rating')
-    if rating:
-        products = products.filter(rating__gte=rating)
+        rating = request.GET.get('rating')
+        if rating:
+            products = products.filter(rating__gte=rating)
 
-    farmer = request.GET.get('farmer')
-    if farmer:
-        products = products.filter(farmer_id=farmer)
+        farmer = request.GET.get('farmer')
+        if farmer:
+            products = products.filter(farmer_id=farmer)
 
-    sort_by = request.GET.get('sort_by')
-    print(sort_by)
-    if sort_by == 'price':
-        products = products.order_by('offer_price')
-    elif sort_by == 'rating':
-        products = products.order_by('-rating')
-    else:
-        products = products.order_by('-created_at')
+        sort_by = request.GET.get('sort_by')
+        if sort_by == 'price':
+            products = products.order_by('offer_price')
+        elif sort_by == 'rating':
+            products = products.order_by('-rating')
+        else:
+            products = products.order_by('-created_at')
 
-    similar_products = Product.objects.filter(category__id=category_id).exclude(id__in=products.values_list('id', flat=True))[:4]
-    farmers = Profile.objects.filter(user_type='Farmer')
+        farmers = Profile.objects.filter(user_type='Farmer')
 
-    context = {
-        'products': products,
-        'similar_products': similar_products,
-        'farmers': farmers,
-        'categories': categories
-    }
-    return render(request, 'shop.html', context)
+        context = {
+            'products': products,
+            'farmers': farmers,
+            'categories': categories
+        }
+        return render(request, 'shop.html', context)
+    except Exception as e:
+        messages.error(request, f"An error occurred: {e}")
+        return redirect('shop')
 
 def shop_view_by_farmer(request, farmer_id):
     products = Product.objects.filter(farmer_id=farmer_id).order_by('created_at')
@@ -113,36 +118,40 @@ def account_view(request):
 # Update profile view
 @login_required(login_url='/login/?next=/account/')
 def update_profile_view(request):
-    if request.method == 'POST':
-        user = request.user
-        profile = Profile.objects.get(user=user)
+    try:
+        if request.method == 'POST':
+            user = request.user
+            profile = Profile.objects.get(user=user)
 
-        user.first_name = request.POST['first_name']
-        user.last_name = request.POST['last_name']
-        user.email = request.POST['email']
-        profile.phone = request.POST['phone']
-        profile.address = request.POST['address']
-        profile.location = request.POST['location']
-        profile.dob = request.POST['dob']
-        profile.user_type = request.POST['user_type']
+            user.first_name = request.POST['first_name']
+            user.last_name = request.POST['last_name']
+            user.email = request.POST['email']
+            profile.phone = request.POST['phone']
+            profile.address = request.POST['address']
+            profile.location = request.POST['location']
+            profile.dob = request.POST['dob']
+            profile.user_type = request.POST['user_type']
 
-        if profile.user_type == 'Farmer':
-            profile.farm_name = request.POST.get('farm_name', '')
-            profile.farm_description = request.POST.get('farm_description', '')
-        else:
-            profile.farm_name = ''
-            profile.farm_description = ''
+            if profile.user_type == 'Farmer':
+                profile.farm_name = request.POST.get('farm_name', '')
+                profile.farm_description = request.POST.get('farm_description', '')
+            else:
+                profile.farm_name = ''
+                profile.farm_description = ''
 
-        if 'profile_picture' in request.FILES:
-            profile.profile_picture = request.FILES['profile_picture']
+            if 'profile_picture' in request.FILES:
+                profile.profile_picture = request.FILES['profile_picture']
 
-        user.save()
-        profile.save()
+            user.save()
+            profile.save()
 
-        messages.success(request, 'Profile updated successfully')
+            messages.success(request, 'Profile updated successfully')
+            return redirect('account')
+
+        return render(request, 'profile.html', {'profile': profile})
+    except Exception as e:
+        messages.error(request, f"An error occurred: {e}")
         return redirect('account')
-
-    return render(request, 'profile.html', {'profile': profile})
 
 # Orders page view
 @login_required(login_url='/login/?next=/account/')
@@ -214,7 +223,8 @@ def edit_product(request, product_id):
     product = Product.objects.get(id=product_id, farmer=request.user.profile)
     if request.method == 'POST':
         name = request.POST.get('name')
-        category = request.POST.get('category')
+        category_id = request.POST.get('category')
+        category = Category.objects.get(id=category_id)
         price = request.POST.get('price')
         stock_quantity = request.POST.get('stock_quantity')
         description = request.POST.get('description')
@@ -252,8 +262,11 @@ def edit_product(request, product_id):
         except ValidationError as e:
             messages.error(request, e.message_dict)
             return render(request, 'edit_product.html', {'product': product})
-
-    return render(request, 'edit_product.html', {'product': product})
+    context = {
+        'product': product,
+        'categories': Category.objects.all(),
+    }
+    return render(request, 'edit_product.html', context)
 
 @login_required(login_url='/login/?next=/account/')
 def delete_product(request, product_id):
@@ -290,7 +303,6 @@ def confirm_logout_view(request):
 # Logout view
 def logout_view(request):
     if request.method == 'POST':
-        print('Logging out')
         logout(request)
         messages.success(request, 'Logged out successfully!')
     return render(request, 'home.html', {'messages': messages.get_messages(request)})
@@ -305,17 +317,21 @@ def cart_view(request):
 
 @login_required(login_url='/login/?next=/cart/')
 def add_to_cart_view(request, product_id):
-    product = Product.objects.get(id=product_id)
-    if request.user.profile.user_type == 'Farmer' and product.farmer == request.user.profile:
-        messages.error(request, 'You cannot add your own product to the cart.')
+    try:
+        product = Product.objects.get(id=product_id)
+        if request.user.profile.user_type == 'Farmer' and product.farmer == request.user.profile:
+            messages.error(request, 'You cannot add your own product to the cart.')
+            return redirect(request.META.get('HTTP_REFERER', 'shop'))
+        cart, created = Cart.objects.get_or_create(user=request.user.profile)
+        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+        if not created:
+            cart_item.quantity += 1
+            cart_item.save()
+        messages.success(request, f'{product.name} added to cart.')
         return redirect(request.META.get('HTTP_REFERER', 'shop'))
-    cart, created = Cart.objects.get_or_create(user=request.user.profile)
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
-    if not created:
-        cart_item.quantity += 1
-        cart_item.save()
-    messages.success(request, f'{product.name} added to cart.')
-    return redirect(request.META.get('HTTP_REFERER', 'shop'))
+    except Exception as e:
+        messages.error(request, f"An error occurred: {e}")
+        return redirect('shop')
 
 @login_required(login_url='/login/?next=/cart/')
 def remove_from_cart_view(request, cart_item_id):
@@ -458,14 +474,18 @@ def custom_404(request, exception):
 @require_POST
 @login_required(login_url='/login/?next=/checkout/')
 def buy_now_view(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    if request.user.profile.user_type == 'Farmer' and product.farmer == request.user.profile:
-        messages.error(request, 'You cannot buy your own product.')
-        return redirect(request.META.get('HTTP_REFERER', 'shop'))
-    cart, created = Cart.objects.get_or_create(user=request.user.profile)
-    cart.cartitem_set.all().delete()  # Clear the cart
-    CartItem.objects.create(cart=cart, product=product, quantity=1)
-    return redirect('checkout')
+    try:
+        product = get_object_or_404(Product, id=product_id)
+        if request.user.profile.user_type == 'Farmer' and product.farmer == request.user.profile:
+            messages.error(request, 'You cannot buy your own product.')
+            return redirect(request.META.get('HTTP_REFERER', 'shop'))
+        cart, created = Cart.objects.get_or_create(user=request.user.profile)
+        cart.cartitem_set.all().delete()  # Clear the cart
+        CartItem.objects.create(cart=cart, product=product, quantity=1)
+        return redirect('checkout')
+    except Exception as e:
+        messages.error(request, f"An error occurred: {e}")
+        return redirect('shop')
 
 @login_required(login_url='/login/?next=/account/')
 def customer_orders_view(request):
@@ -515,3 +535,31 @@ def add_category_view(request):
     categories = Category.objects.all()
     context = {'categories': categories}
     return render(request, 'add_category.html', context)
+
+def records_view(request):
+    records_list = Record.objects.all().order_by('-date')
+    paginator = Paginator(records_list, 10)  # Show 10 records per page
+    page_number = request.GET.get('page')
+    records = paginator.get_page(page_number)
+
+    # Convert records to a list of dictionaries for JSON serialization
+    records_data = json.dumps(
+        list(records_list.values('product__id', 'product__name', 'farmer__user__username', 'price', 'date')),
+        cls=DjangoJSONEncoder
+    )
+
+    products = Product.objects.all()
+
+    context = {'records': records, 'records_data': records_data, 'products': products}
+    return render(request, 'records.html', context)
+
+def get_filtered_records(request):
+    product_id = request.GET.get('product_id')
+    if (product_id):
+        records_list = Record.objects.filter(product_id=product_id).order_by('date')
+    else:
+        records_list = Record.objects.all().order_by('date')
+
+    records_data = list(records_list.values('product__id', 'product__name', 'farmer__user__username', 'price', 'date'))
+    return JsonResponse(records_data, safe=False)
+
