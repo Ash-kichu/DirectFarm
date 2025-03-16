@@ -51,4 +51,3 @@ class RecordAdmin(admin.ModelAdmin):
     list_display = ('product', 'farmer', 'price', 'date')
     list_filter = ('date', 'farmer')
     search_fields = ('product__name', 'farmer__user__username')
-    list_editable = ('date',)

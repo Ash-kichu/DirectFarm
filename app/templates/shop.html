@@ -21,7 +21,7 @@
                 <div class="flex flex-col gap-4">
                     <div class="p-2 px-3 bg-secondary text-primary flex gap-1 items-center cursor-pointer rounded-xl">
                         <select name="category" class="w-full bg-secondary border-none outline-none ring-0 focus:outline-none" onchange="if(this.value) document.getElementById('filter-form').submit();">
-                            <option value="">All Categories</option>
+                            <option value="0">All Categories</option>
                             {% for category in categories %}
                                 <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
                                     {{ category.name }}
@@ -53,7 +53,6 @@
                     </div>
                     <div class="p-2 px-3 bg-secondary text-primary flex gap-1 items-center cursor-pointer rounded-xl">
                         <select name="rating" class="w-full bg-secondary border-none outline-none ring-0 focus:outline-none" onchange="if(this.value) document.getElementById('filter-form').submit();">
-                            <option value="">Ratings</option>
                             <option value="1" {% if request.GET.rating == "1" %}selected{% endif %}>1 Star & Up</option>
                             <option value="2" {% if request.GET.rating == "2" %}selected{% endif %}>2 Stars & Up</option>
                             <option value="3" {% if request.GET.rating == "3" %}selected{% endif %}>3 Stars & Up</option>
@@ -63,7 +62,7 @@
                     </div>
                     <div class="p-2 px-3 bg-secondary text-primary flex gap-1 items-center cursor-pointer rounded-xl">
                         <select name="farmer" class="w-full bg-secondary border-none outline-none ring-0 focus:outline-none" onchange="if(this.value) document.getElementById('filter-form').submit();">
-                            <option value="">All Farmers</option>
+                            <option value="0">All Farmers</option>
                             {% for farmer in farmers %}
                                 <option value="{{ farmer.id }}" {% if request.GET.farmer == farmer.id|stringformat:"s" %}selected{% endif %}>
                                     {{ farmer.farm_name|default:farmer.user.username }}

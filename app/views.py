@@ -36,10 +36,10 @@ def home_view(request):
 def shop_view(request):
     try:
         products = Product.objects.all().order_by('created_at')
-        categories = Category.objects.filter(parent__isnull=True)
+        categories = Category.objects.all()
 
         category_id = request.GET.get('category')
-        if category_id:
+        if category_id is not None and category_id != '0':
             products = products.filter(category_id=category_id)
 
         delivery_region = request.GET.get('delivery_region')
@@ -56,7 +56,7 @@ def shop_view(request):
             products = products.filter(rating__gte=rating)
 
         farmer = request.GET.get('farmer')
-        if farmer:
+        if farmer is not None and farmer != '0':
             products = products.filter(farmer_id=farmer)
 
         sort_by = request.GET.get('sort_by')
@@ -81,15 +81,25 @@ def shop_view(request):
 
 def shop_view_by_farmer(request, farmer_id):
     products = Product.objects.filter(farmer_id=farmer_id).order_by('created_at')
+    categories = Category.objects.all()
+    farmers = Profile.objects.filter(user_type='Farmer')
+
     context = {
         'products': products,
+        'farmers': farmers,
+        'categories': categories
     }
     return render(request, 'shop.html', context)
 
 def shop_view_by_category(request, category):
     products = Product.objects.filter(category=category).order_by('created_at')
+    categories = Category.objects.all()
+    farmers = Profile.objects.filter(user_type='Farmer')
+
     context = {
         'products': products,
+        'farmers': farmers,
+        'categories': categories
     }
     return render(request, 'shop.html', context)
 
