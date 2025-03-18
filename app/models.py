@@ -54,9 +54,6 @@ class Category(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    # def clean(self):
-    #     if Product.objects.filter(name=self.name).exclude(pk=self.pk).exists():
-    #         raise ValidationError("A product with this name already exists. Please choose a different name.")
     price = models.DecimalField(max_digits=10, decimal_places=2)
     offer_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     offer_percentage = models.PositiveSmallIntegerField(validators=[MaxValueValidator(100)], blank=True, null=True)

@@ -12,6 +12,7 @@ from django.core.paginator import Paginator
 from django.core.serializers.json import DjangoJSONEncoder
 import json
 from django.http import JsonResponse
+from django.db.models import Q
 
 from .models import Product, Cart, CartItem, Order, OrderItem, Review, Category, Record
 
@@ -39,8 +40,26 @@ def shop_view(request):
         categories = Category.objects.all()
 
         category_id = request.GET.get('category')
-        if category_id is not None and category_id != '0':
-            products = products.filter(category_id=category_id)
+
+        if category_id and category_id != '0':
+            try:
+                selected_category = Category.objects.get(id=category_id)
+                
+                # Check if this category has children
+                child_categories = selected_category.subcategories.all()
+                
+                if child_categories.exists():
+                    # If it's a parent, fetch products in this category OR its children
+                    products = products.filter(
+                        Q(category=selected_category) | Q(category__in=child_categories)
+                    )
+                else:
+                    # If it's a child or no children exist, fetch only this category's products
+                    products = products.filter(category=selected_category)
+
+            except Category.DoesNotExist:
+                pass  # Optionally handle invalid category
+
 
         delivery_region = request.GET.get('delivery_region')
         if delivery_region:
